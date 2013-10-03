@@ -4,8 +4,9 @@
 #include <fstream>
 #include <vector>
 
-// OpenGL Libraries
+// OpenGL Libraries>
 #include <GL/glew.h>
+#define GLFW_DLL
 #include <GL/glfw.h>
 #include <glm/glm.hpp>
 
@@ -81,7 +82,6 @@ int main( int argc, char** argv ) {
 	shaderList.push_back( CreateShader(GL_VERTEX_SHADER, readFile("shaders/vertexshader.glsl")) );
 	shaderList.push_back( CreateShader(GL_FRAGMENT_SHADER, readFile("shaders/fragmentshader.glsl")) );
 	lucidShaderProgram = CreateProgram(shaderList);
-	glDeleteShader( shaderList[0] );
 	glDeleteShader( shaderList[0] );
 	
 	

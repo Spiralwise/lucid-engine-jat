@@ -147,14 +147,14 @@ CMAKE_USE_RELATIVE_PATHS:BOOL=OFF
 CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
 
 // GLEW
-GLEW_INCLUDE_DIR:FILEPATH=D:/Users/Seb/Documents/GitHub/lucid-engine/libraries/glew/include
+GLEW_INCLUDE_DIR:FILEPATH=D:/Users/Seb/Documents/GitHub/lucid-engine/includes
 
-GLEW_LINK_DIR:FILEPATH=D:/Users/Seb/Documents/GitHub/lucid-engine/libraries/glew/lib
+GLEW_LINK_DIR:FILEPATH=D:/Users/Seb/Documents/GitHub/lucid-engine/libraries
 
 // GLFW
-GLFW_INCLUDE_DIR:FILEPATH=D:/Users/Seb/Documents/GitHub/lucid-engine/libraries/glfw/include
+GLFW_INCLUDE_DIR:FILEPATH=D:/Users/Seb/Documents/GitHub/lucid-engine/libraries/includes
 
-GLFW_LINK_DIR:FILEPATH=D:/Users/Seb/Documents/GitHub/lucid-engine/libraries/glfw/lib-mingw
+GLFW_LINK_DIR:FILEPATH=D:/Users/Seb/Documents/GitHub/lucid-engine/libraries
 
 // GLM
 GLM_INCLUDE_DIR:FILEPATH=D:/Users/Seb/Documents/GitHub/lucid-engine/libraries/glm
@@ -164,6 +164,12 @@ Lucid_BINARY_DIR:STATIC=D:/Users/Seb/Documents/GitHub/lucid-engine
 
 //Value Computed by CMake
 Lucid_SOURCE_DIR:STATIC=D:/Users/Seb/Documents/GitHub/lucid-engine
+
+//OpenGL library for win32
+OPENGL_gl_LIBRARY:STRING=opengl32
+
+//GLU library for win32
+OPENGL_glu_LIBRARY:STRING=glu32
 
 
 ########################
@@ -278,4 +284,10 @@ CMAKE_STRIP-ADVANCED:INTERNAL=1
 CMAKE_USE_RELATIVE_PATHS-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_VERBOSE_MAKEFILE
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
+//Details about finding OpenGL
+FIND_PACKAGE_MESSAGE_DETAILS_OpenGL:INTERNAL=[opengl32][v()]
+//ADVANCED property for variable: OPENGL_gl_LIBRARY
+OPENGL_gl_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: OPENGL_glu_LIBRARY
+OPENGL_glu_LIBRARY-ADVANCED:INTERNAL=1
 

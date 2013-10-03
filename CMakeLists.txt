@@ -2,6 +2,7 @@
 cmake_minimum_required(VERSION 2.8)
 project(Lucid CXX)
 set(EXECUTABLE_OUTPUT_PATH lucid-build/${CMAKE_BUILD_TYPE})
+find_package(OpenGL REQUIRED)
 
 # Sources
 file(
@@ -33,6 +34,7 @@ add_executable(
 )
 target_link_libraries(
 	${PROJECT_NAME}
-	glfw
-	glew32
+	openGL32
+	glew32.dll
+	glfwdll
 )
