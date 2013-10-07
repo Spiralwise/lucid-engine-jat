@@ -1,5 +1,6 @@
 // Standard Libraries
 #include <stdlib.h>
+#include <string.h>
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -36,6 +37,19 @@ string readFile( const string &filename ) {
 	}
 	
 	return output;
+}
+
+/**
+ * Tutorial purpose functions
+ */
+const float fLoopDuration = 5.0f;
+const float fScale = 3.14159f * 2.0f / fLoopDuration;
+
+void rotatePosition ( float &xoffset, float &yoffset ) {
+	float elapsedTime = (float)glfwGetTime();
+	float fCurrentTimeLoop = fmod(elapsedTime, fLoopDuration);
+	xoffset = cosf ( fCurrentTimeLoop * fScale ) * .5f;
+	yoffset = sinf ( fCurrentTimeLoop * fScale ) * .5f;
 }
 
 int main( int argc, char** argv ) {
@@ -114,16 +128,32 @@ int main( int argc, char** argv ) {
 	};
 	GLuint objectPosition;
 	glGenBuffers(1, &objectPosition);
+	
+	glBindBuffer(GL_ARRAY_BUFFER, objectPosition);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STREAM_DRAW);
 
 	/** Display */
     do {
+	
+		/* Tuto rotation */
+		float fXoffset, fYoffset;
+		int iNewDataSize = 3*4;
+		rotatePosition(fXoffset, fYoffset);
+		std::vector<float> fNewData ( iNewDataSize );
+		memcpy ( &fNewData[0], vertices, (iNewDataSize) * sizeof(float) );
+		for ( int i = 0; i < 12; i += 4 ) {
+			fNewData[i] += fXoffset;
+			fNewData[i+1] += fYoffset;
+		}
+		/* End Tuto rotation */
+	
 		glClearColor( 0.062f, 0.157f, 0.349f, 0.0f );
 		glClear(GL_COLOR_BUFFER_BIT);
 		
 		glUseProgram(lucidShaderProgram);
 		
 		glBindBuffer(GL_ARRAY_BUFFER, objectPosition);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, fNewData.size()*sizeof(float), &fNewData[0]);
 		
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
