@@ -91,9 +91,15 @@ int main( int argc, char** argv ) {
 		0.75f, -0.75f, 0.0f, 1.0f,
 		-0.75f, -0.75f, 0.0f, 1.0f
 		};
+	/*const float vertices[] = {
+		1.2f, 0.75f, 0.0f, 1.0f,
+		0.75f, -0.95f, 0.0f, 1.0f,
+		-0.75f, -0.75f, -1.75f, 1.0f
+		};*/
 	GLuint objectPosition;
 	glGenBuffers(1, &objectPosition);
 
+	/** Display */
     do {
 		glClearColor( 0.062f, 0.157f, 0.349f, 0.0f );
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -101,7 +107,7 @@ int main( int argc, char** argv ) {
 		glUseProgram(lucidShaderProgram);
 		
 		glBindBuffer(GL_ARRAY_BUFFER, objectPosition);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &objectPosition, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 		
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
@@ -117,6 +123,7 @@ int main( int argc, char** argv ) {
     } while ( glfwGetKey( GLFW_KEY_ESC ) != GLFW_PRESS
               && glfwGetWindowParam( GLFW_OPENED ));
 
+	/** Termination **/
     glfwTerminate();
 
     cout << "Goodbye !" << endl;

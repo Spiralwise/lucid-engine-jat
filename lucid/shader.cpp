@@ -7,7 +7,7 @@ using namespace std;
 GLuint CreateProgram(const std::vector<GLuint> &shaderList) {
 	// Link
 	GLuint program = glCreateProgram();
-	for (size_t i; i < shaderList.size(); i++)
+	for ( size_t i = 0; i < shaderList.size(); i++ )
 		glAttachShader(program, shaderList[i]);
 	glLinkProgram(program);
 	
@@ -22,7 +22,10 @@ GLuint CreateProgram(const std::vector<GLuint> &shaderList) {
 		cout << "Linker failure : " << infolog << endl;
 	} else
 		cout << "Linker success." << endl;
-		
+	
+	for ( size_t i = 0; i < shaderList.size(); i++ )
+		glDetachShader( program, shaderList[i] );
+	
 	return program;
 }
 
