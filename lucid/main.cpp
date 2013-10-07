@@ -97,6 +97,7 @@ int main( int argc, char** argv ) {
 	shaderList.push_back( CreateShader(GL_FRAGMENT_SHADER, readFile("shaders/fragmentshader.glsl")) );
 	lucidShaderProgram = CreateProgram(shaderList);
 	glDeleteShader( shaderList[0] ); // TODO : Cette ligne doit être prise en charge par shader.h ?
+	GLint uniformOffset = glGetUniformLocation ( lucidShaderProgram, "offset" );
 	
 	
 	/** Object Initialisation **/
@@ -128,9 +129,6 @@ int main( int argc, char** argv ) {
 	};
 	GLuint objectPosition;
 	glGenBuffers(1, &objectPosition);
-	
-	glBindBuffer(GL_ARRAY_BUFFER, objectPosition);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STREAM_DRAW);
 
 	/** Display */
     do {
@@ -139,21 +137,22 @@ int main( int argc, char** argv ) {
 		float fXoffset, fYoffset;
 		int iNewDataSize = 3*4;
 		rotatePosition(fXoffset, fYoffset);
-		std::vector<float> fNewData ( iNewDataSize );
+		/*std::vector<float> fNewData ( iNewDataSize );
 		memcpy ( &fNewData[0], vertices, (iNewDataSize) * sizeof(float) );
 		for ( int i = 0; i < 12; i += 4 ) {
 			fNewData[i] += fXoffset;
 			fNewData[i+1] += fYoffset;
-		}
+		}*/
 		/* End Tuto rotation */
 	
 		glClearColor( 0.062f, 0.157f, 0.349f, 0.0f );
 		glClear(GL_COLOR_BUFFER_BIT);
 		
 		glUseProgram(lucidShaderProgram);
+		glUniform2f ( uniformOffset, fXoffset, fYoffset );
 		
 		glBindBuffer(GL_ARRAY_BUFFER, objectPosition);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, fNewData.size()*sizeof(float), &fNewData[0]);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 		
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
