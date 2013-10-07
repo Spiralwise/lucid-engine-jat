@@ -2,7 +2,9 @@
 
 Lucid Engine is a openGL based graphics engine.
 
-To compile the project, `Glew (1.10.0)` (july 2013), `GLFW (2.7.8)` (april 2013) and `GLM (0.9.4.3)` are required.
+Using `Glew (1.10.0)` (july 2013), `GLFW (2.7.8)` (april 2013) and `GLM (0.9.4.3)`.
+
+Upgrade to GLFW 3.0.x soon.
 
 ## Thanks
 

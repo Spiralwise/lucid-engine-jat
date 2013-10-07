@@ -82,20 +82,36 @@ int main( int argc, char** argv ) {
 	shaderList.push_back( CreateShader(GL_VERTEX_SHADER, readFile("shaders/vertexshader.glsl")) );
 	shaderList.push_back( CreateShader(GL_FRAGMENT_SHADER, readFile("shaders/fragmentshader.glsl")) );
 	lucidShaderProgram = CreateProgram(shaderList);
-	glDeleteShader( shaderList[0] );
+	glDeleteShader( shaderList[0] ); // TODO : Cette ligne doit être prise en charge par shader.h ?
 	
 	
 	/** Object Initialisation **/
-	const float vertices[] = {
+	/*const float vertices[] = {
 		0.75f, 0.75f, 0.0f, 1.0f,
 		0.75f, -0.75f, 0.0f, 1.0f,
 		-0.75f, -0.75f, 0.0f, 1.0f
-		};
+		};*/
 	/*const float vertices[] = {
 		1.2f, 0.75f, 0.0f, 1.0f,
 		0.75f, -0.95f, 0.0f, 1.0f,
 		-0.75f, -0.75f, -1.75f, 1.0f
 		};*/
+	/*const float vertices[] = {
+		0.75f, 0.75f, 0.0f, 1.0f,
+		0.75f, -0.75f, 0.0f, 1.0f,
+		-0.75f, -0.75f, 0.0f, 1.0f,
+		-0.75f, 0.75f, 0.0f, 1.0f,
+		0.65f, 0.75f, 0.0f, 1.0f,
+		-0.75f, -0.65f, 0.0f, 1.0f
+		};*/
+	const float vertices[] = {
+		 0.0f,    0.5f, 0.0f, 1.0f,
+		 0.5f, -0.366f, 0.0f, 1.0f,
+		-0.5f, -0.366f, 0.0f, 1.0f,
+		 1.0f,    0.0f, 0.0f, 1.0f,
+		 0.0f,    1.0f, 0.0f, 1.0f,
+		 0.0f,    0.0f, 1.0f, 1.0f,
+	};
 	GLuint objectPosition;
 	glGenBuffers(1, &objectPosition);
 
@@ -110,11 +126,14 @@ int main( int argc, char** argv ) {
 		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 		
 		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
+		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 0, (void*)48);
 		
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 		
 		glDisableVertexAttribArray(0);
+		glDisableVertexAttribArray(1);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 		glUseProgram(0);
