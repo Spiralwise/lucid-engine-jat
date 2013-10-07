@@ -39,22 +39,14 @@ string readFile( const string &filename ) {
 	return output;
 }
 
-/**
- * Tutorial purpose functions
- */
-const float fLoopDuration = 5.0f;
-const float fScale = 3.14159f * 2.0f / fLoopDuration;
-
-void rotatePosition ( float &xoffset, float &yoffset ) {
-	float elapsedTime = (float)glfwGetTime();
-	float fCurrentTimeLoop = fmod(elapsedTime, fLoopDuration);
-	xoffset = cosf ( fCurrentTimeLoop * fScale ) * .5f;
-	yoffset = sinf ( fCurrentTimeLoop * fScale ) * .5f;
-}
 
 int main( int argc, char** argv ) {
 
     cout << "Lucid Engine v0.0.0" << endl;
+	
+	double dMeanRenderTime = .0f;
+	unsigned uRenderTimeNumber = 0; // TODO En faire une classe dans le cadre de l'étude des performances.
+	double dLastTime; 
 
     /** GLFW **/
     if ( !glfwInit() ) {
@@ -97,7 +89,13 @@ int main( int argc, char** argv ) {
 	shaderList.push_back( CreateShader(GL_FRAGMENT_SHADER, readFile("shaders/fragmentshader.glsl")) );
 	lucidShaderProgram = CreateProgram(shaderList);
 	glDeleteShader( shaderList[0] ); // TODO : Cette ligne doit être prise en charge par shader.h ?
-	GLint uniformOffset = glGetUniformLocation ( lucidShaderProgram, "offset" );
+	GLint uniformLoop = glGetUniformLocation ( lucidShaderProgram, "loopDuration" );
+	GLint uniformColorLoop = glGetUniformLocation ( lucidShaderProgram, "colorLoopDuration" );
+	GLint uniformTime = glGetUniformLocation ( lucidShaderProgram, "time" );
+	
+	glUseProgram(lucidShaderProgram);
+	glUniform1f ( uniformColorLoop, 7.0f );
+	glUseProgram(0);
 	
 	
 	/** Object Initialisation **/
@@ -127,29 +125,27 @@ int main( int argc, char** argv ) {
 		 0.0f,    1.0f, 0.0f, 1.0f,
 		 0.0f,    0.0f, 1.0f, 1.0f,
 	};
+	const float vertices2[] = {
+		 0.0f,    0.35f, 0.0f, 1.0f,
+		 0.35f, -0.2f, 0.0f, 1.0f,
+		-0.35f, -0.2f, 0.0f, 1.0f,
+		 1.0f,    0.0f, 0.0f, 1.0f,
+		 0.0f,    1.0f, 0.0f, 1.0f,
+		 0.0f,    0.0f, 1.0f, 1.0f,
+	};
 	GLuint objectPosition;
 	glGenBuffers(1, &objectPosition);
 
 	/** Display */
+	dLastTime = glfwGetTime();
     do {
-	
-		/* Tuto rotation */
-		float fXoffset, fYoffset;
-		int iNewDataSize = 3*4;
-		rotatePosition(fXoffset, fYoffset);
-		/*std::vector<float> fNewData ( iNewDataSize );
-		memcpy ( &fNewData[0], vertices, (iNewDataSize) * sizeof(float) );
-		for ( int i = 0; i < 12; i += 4 ) {
-			fNewData[i] += fXoffset;
-			fNewData[i+1] += fYoffset;
-		}*/
-		/* End Tuto rotation */
 	
 		glClearColor( 0.062f, 0.157f, 0.349f, 0.0f );
 		glClear(GL_COLOR_BUFFER_BIT);
 		
 		glUseProgram(lucidShaderProgram);
-		glUniform2f ( uniformOffset, fXoffset, fYoffset );
+		glUniform1f ( uniformTime,  glfwGetTime() );
+		glUniform1f ( uniformLoop, 5.0f );
 		
 		glBindBuffer(GL_ARRAY_BUFFER, objectPosition);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
@@ -161,6 +157,16 @@ int main( int argc, char** argv ) {
 		
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 		
+			/* Second triangle */
+		glUniform1f ( uniformLoop, 2.5f );
+		
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices2), vertices2, GL_STATIC_DRAW);
+		
+		//glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
+		//glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 0, (void*)48);
+		glDrawArrays(GL_TRIANGLES, 0, 3);
+			/* End of Second triangle */
+		
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -168,13 +174,19 @@ int main( int argc, char** argv ) {
 		glUseProgram(0);
 		
         glfwSwapBuffers();
+		
+		dMeanRenderTime = uRenderTimeNumber * dMeanRenderTime;
+		dMeanRenderTime += glfwGetTime() - dLastTime;
+		dMeanRenderTime /= ++uRenderTimeNumber;
+		dLastTime = glfwGetTime();
+		
     } while ( glfwGetKey( GLFW_KEY_ESC ) != GLFW_PRESS
               && glfwGetWindowParam( GLFW_OPENED ));
 
 	/** Termination **/
     glfwTerminate();
 
-    cout << "Goodbye !" << endl;
+	cout << "Goodbye ! (Mean rendering time=" << dMeanRenderTime*1000 << ")" << endl;
 
     return EXIT_SUCCESS;
 }
