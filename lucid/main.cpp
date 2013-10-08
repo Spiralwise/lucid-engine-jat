@@ -90,34 +90,24 @@ int main( int argc, char** argv ) {
 	lucidShaderProgram = CreateProgram(shaderList);
 	glDeleteShader( shaderList[0] ); // TODO : Cette ligne doit être prise en charge par shader.h ?
 	GLint uniformLoop = glGetUniformLocation ( lucidShaderProgram, "loopDuration" );
-	GLint uniformColorLoop = glGetUniformLocation ( lucidShaderProgram, "colorLoopDuration" );
 	GLint uniformTime = glGetUniformLocation ( lucidShaderProgram, "time" );
+	GLint uniformZNear = glGetUniformLocation ( lucidShaderProgram, "zNear" );
+	GLint uniformZFar = glGetUniformLocation ( lucidShaderProgram, "zFar" );
+	GLint uniformFrustum = glGetUniformLocation ( lucidShaderProgram, "frustumScale" );
 	
 	glUseProgram(lucidShaderProgram);
-	glUniform1f ( uniformColorLoop, 7.0f );
+	glUniform1f ( uniformLoop, 5.0f );
+	glUniform1f ( uniformZNear, 1.0f );
+	glUniform1f ( uniformZFar, 5.0f );
+	glUniform1f ( uniformFrustum, 1.0f );
 	glUseProgram(0);
 	
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+	glFrontFace(GL_CCW);
 	
 	/** Object Initialisation **/
 	/*const float vertices[] = {
-		0.75f, 0.75f, 0.0f, 1.0f,
-		0.75f, -0.75f, 0.0f, 1.0f,
-		-0.75f, -0.75f, 0.0f, 1.0f
-		};*/
-	/*const float vertices[] = {
-		1.2f, 0.75f, 0.0f, 1.0f,
-		0.75f, -0.95f, 0.0f, 1.0f,
-		-0.75f, -0.75f, -1.75f, 1.0f
-		};*/
-	/*const float vertices[] = {
-		0.75f, 0.75f, 0.0f, 1.0f,
-		0.75f, -0.75f, 0.0f, 1.0f,
-		-0.75f, -0.75f, 0.0f, 1.0f,
-		-0.75f, 0.75f, 0.0f, 1.0f,
-		0.65f, 0.75f, 0.0f, 1.0f,
-		-0.75f, -0.65f, 0.0f, 1.0f
-		};*/
-	const float vertices[] = {
 		 0.0f,    0.5f, 0.0f, 1.0f,
 		 0.5f, -0.366f, 0.0f, 1.0f,
 		-0.5f, -0.366f, 0.0f, 1.0f,
@@ -132,43 +122,143 @@ int main( int argc, char** argv ) {
 		 1.0f,    0.0f, 0.0f, 1.0f,
 		 0.0f,    1.0f, 0.0f, 1.0f,
 		 0.0f,    0.0f, 1.0f, 1.0f,
+	};*/
+	const float cubeVertices[] = {
+		// front
+		0.0f, 0.0f, 0.0f, 1.0f,
+		1.0f, 0.0f, 0.0f, 1.0f,
+		0.0f, 1.0f, 0.0f, 1.0f,
+		
+		1.0f, 0.0f, 0.0f, 1.0f,
+		1.0f, 1.0f, 0.0f, 1.0f,
+		0.0f, 1.0f, 0.0f, 1.0f,
+		
+		// right
+		1.0f, 0.0f, 0.0f, 1.0f,
+		1.0f, 0.0f, -1.0f, 1.0f,
+		1.0f, 1.0f, 0.0f, 1.0f,
+		
+		1.0f, 1.0f, 0.0f, 1.0f,
+		1.0f, 0.0f, -1.0f, 1.0f,
+		1.0f, 1.0f, -1.0f, 1.0f,
+		
+		// top
+		0.0f, 1.0f, 0.0f, 1.0f,
+		1.0f, 1.0f, 0.0f, 1.0f,
+		1.0f, 1.0f, -1.0f, 1.0f,
+		
+		1.0f, 1.0f, -1.0f, 1.0f,
+		0.0f, 1.0f, -1.0f, 1.0f,
+		0.0f, 1.0f, 0.0f, 1.0f,
+		
+		// left
+		0.0f, 0.0f, 0.0f, 1.0f,
+		0.0f, 1.0f, -1.0f, 1.0f,
+		0.0f, 0.0f, -1.0f, 1.0f,
+		
+		0.0f, 1.0f, -1.0f, 1.0f,
+		0.0f, 0.0f, 0.0f, 1.0f,
+		0.0f, 1.0f, 0.0f, 1.0f,
+		
+		// bottom
+		0.0f, 0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, -1.0f, 1.0f,
+		1.0f, 0.0f, 0.0f, 1.0f,
+		
+		1.0f, 0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, -1.0f, 1.0f,
+		1.0f, 0.0f, -1.0f, 1.0f,
+		
+		// back
+		0.0f, 0.0f, -1.0f, 1.0f,
+		0.0f, 1.0f, -1.0f, 1.0f,
+		1.0f, 1.0f, -1.0f, 1.0f,
+		
+		1.0f, 1.0f, -1.0f, 1.0f,
+		1.0f, 0.0f, -1.0f, 1.0f,
+		0.0f, 0.0f, -1.0f, 1.0f,
+		
+		// COLOR
+		// front
+		0.0f, 0.0f, 0.0f, 1.0f,
+		1.0f, 0.0f, 0.0f, 1.0f,
+		0.0f, 1.0f, 0.0f, 1.0f,
+		
+		1.0f, 0.0f, 0.0f, 1.0f,
+		1.0f, 1.0f, 0.0f, 1.0f,
+		0.0f, 1.0f, 0.0f, 1.0f,
+		
+		// right
+		1.0f, 0.0f, 0.0f, 1.0f,
+		1.0f, 0.0f, 1.0f, 1.0f,
+		1.0f, 1.0f, 0.0f, 1.0f,
+		
+		1.0f, 1.0f, 0.0f, 1.0f,
+		1.0f, 0.0f, 1.0f, 1.0f,
+		1.0f, 1.0f, 1.0f, 1.0f,
+		
+		// top
+		0.0f, 1.0f, 0.0f, 1.0f,
+		1.0f, 1.0f, 0.0f, 1.0f,
+		1.0f, 1.0f, 1.0f, 1.0f,
+		
+		1.0f, 1.0f, 1.0f, 1.0f,
+		0.0f, 1.0f, 1.0f, 1.0f,
+		0.0f, 1.0f, 0.0f, 1.0f,
+		
+		// left
+		0.0f, 0.0f, 0.0f, 1.0f,
+		0.0f, 1.0f, 1.0f, 1.0f,
+		0.0f, 0.0f, 1.0f, 1.0f,
+		
+		0.0f, 1.0f, 1.0f, 1.0f,
+		0.0f, 0.0f, 0.0f, 1.0f,
+		0.0f, 1.0f, 0.0f, 1.0f,
+		
+		// bottom
+		0.0f, 0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f, 1.0f,
+		1.0f, 0.0f, 0.0f, 1.0f,
+		
+		1.0f, 0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f, 1.0f,
+		1.0f, 0.0f, 1.0f, 1.0f,
+		
+		// back
+		0.0f, 0.0f, 1.0f, 1.0f,
+		0.0f, 1.0f, 1.0f, 1.0f,
+		1.0f, 1.0f, 1.0f, 1.0f,
+		
+		1.0f, 1.0f, 1.0f, 1.0f,
+		1.0f, 0.0f, 1.0f, 1.0f,
+		0.0f, 0.0f, 1.0f, 1.0f
 	};
+	
 	GLuint objectPosition;
 	glGenBuffers(1, &objectPosition);
 
 	/** Display */
 	dLastTime = glfwGetTime();
+	size_t colorData = sizeof(cubeVertices) / 2;
     do {
 	
 		glClearColor( 0.062f, 0.157f, 0.349f, 0.0f );
 		glClear(GL_COLOR_BUFFER_BIT);
 		
 		glUseProgram(lucidShaderProgram);
-		glUniform1f ( uniformTime,  glfwGetTime() );
-		glUniform1f ( uniformLoop, 5.0f );
+		glUniform1f ( uniformTime, glfwGetTime() );
 		
 		glBindBuffer(GL_ARRAY_BUFFER, objectPosition);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
 		
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
-		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 0, (void*)48);
+		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 0, (void*)colorData);
 		
-		glDrawArrays(GL_TRIANGLES, 0, 3);
-		
-			/* Second triangle */
-		glUniform1f ( uniformLoop, 2.5f );
-		
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices2), vertices2, GL_STATIC_DRAW);
-		
-		//glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
-		//glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 0, (void*)48);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
-			/* End of Second triangle */
+		glDrawArrays(GL_TRIANGLES, 0, 36);
 		
 		glDisableVertexAttribArray(0);
-		glDisableVertexAttribArray(1);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 		glUseProgram(0);

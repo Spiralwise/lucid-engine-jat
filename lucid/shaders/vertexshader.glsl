@@ -5,6 +5,9 @@ layout(location=1) in vec4 color;
 
 uniform float loopDuration;
 uniform float time;
+uniform float zNear;
+uniform float zFar;
+uniform float frustumScale;
 
 out vec4 theColor;
 
@@ -14,10 +17,18 @@ void main () {
 	float currentTime = mod(time, loopDuration);
 	
 	vec4 positionOffset = vec4 (
-		cos(currentTime * timeScale) * 0.5f,
-		sin(currentTime * timeScale) * 0.5f,
-		0.0f,
+		cos(currentTime * timeScale) - 0.25f,
+		sin(currentTime * timeScale) - 0.25f,
+		-3.0f,
 		0.0f);
-	gl_Position = position + positionOffset;
+	vec4 cameraPos = position + positionOffset;
+	vec4 clipPos;
+	
+	clipPos.xy = cameraPos.xy * frustumScale;
+	clipPos.z = cameraPos.z * (zNear + zFar) + 2 * zNear * zFar;
+	clipPos.z /= zNear - zFar;
+	clipPos.w = -cameraPos.z;
+	
+	gl_Position = clipPos;
 	theColor = color;
 }
