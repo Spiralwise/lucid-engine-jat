@@ -8,7 +8,7 @@
 // OpenGL Libraries>
 #include <GL/glew.h>
 #define GLFW_DLL
-#include <GL/glfw.h>
+#include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
 // Lucid Includes
@@ -39,6 +39,13 @@ string readFile( const string &filename ) {
 	return output;
 }
 
+/** GLFW Key Callback */
+static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, GL_TRUE);
+}
+
 
 int main( int argc, char** argv ) {
 
@@ -54,34 +61,35 @@ int main( int argc, char** argv ) {
         return EXIT_FAILURE;
     }
 
-    // FIXME What is it ?
-    glfwOpenWindowHint(GLFW_FSAA_SAMPLES, 4);
+    glfwWindowHint(GLFW_SAMPLES, 4);
     //glfwOpenWindowHint(GLFW_WINDOW_NO_RESIZE,GL_TRUE);
-    glfwOpenWindowHint(GLFW_OPENGL_VERSION_MAJOR, 3);
-    glfwOpenWindowHint(GLFW_OPENGL_VERSION_MINOR, 3);
-    glfwOpenWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    if ( !glfwOpenWindow( 1024, 768, 0, 0, 0, 0, 32, 0, (int) GLFW_WINDOW ) ) {
+	GLFWwindow* myWindow = glfwCreateWindow( 1024, 768, "Lucid 0.0.0", NULL, NULL );
+    if ( !myWindow ) {
         cout << "Failed to open GLFW window. The application is terminated." << endl;
         glfwTerminate();
         return EXIT_FAILURE;
     }
+	glfwMakeContextCurrent ( myWindow );
+	glfwSetKeyCallback ( myWindow, key_callback );
 
     cout << "GLFW initialized." << endl;
-
 	
-    /** GLEW/OpenGL **/
+	
+	/** GLEW/OpenGL **/
+	glewExperimental = true;
     if ( glewInit() != GLEW_OK ) {
         cout << "Failed to initialize GLEW. The application is terminated." << endl;
         return EXIT_FAILURE;
     }
-
-    cout << "GLEW initialized." << endl;
+	
+	cout << "GLEW initialized." << endl;
 
 	
 	/** Initialization **/
-    glfwSetWindowTitle( "Lucid 0.0.0" );
-	
 	// Shaders
 	std::vector<GLuint> shaderList;
 	GLuint lucidShaderProgram;
@@ -257,15 +265,16 @@ int main( int argc, char** argv ) {
 
 		glUseProgram(0);
 		
-        glfwSwapBuffers();
+        glfwSwapBuffers ( myWindow );
 		
 		dMeanRenderTime = uRenderTimeNumber * dMeanRenderTime;
 		dMeanRenderTime += glfwGetTime() - dLastTime;
 		dMeanRenderTime /= ++uRenderTimeNumber;
 		dLastTime = glfwGetTime();
 		
-    } while ( glfwGetKey( GLFW_KEY_ESC ) != GLFW_PRESS
-              && glfwGetWindowParam( GLFW_OPENED ));
+		glfwPollEvents();
+		
+    } while ( !glfwWindowShouldClose( myWindow ) );
 
 	/** Termination **/
 	glBindBuffer(GL_ARRAY_BUFFER, 0);

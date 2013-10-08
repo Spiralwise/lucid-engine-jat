@@ -36,5 +36,5 @@ target_link_libraries(
 	${PROJECT_NAME}
 	openGL32
 	glew32.dll
-	glfwdll
+	glfw3dll
 )
