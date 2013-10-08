@@ -91,15 +91,21 @@ int main( int argc, char** argv ) {
 	glDeleteShader( shaderList[0] ); // TODO : Cette ligne doit être prise en charge par shader.h ?
 	GLint uniformLoop = glGetUniformLocation ( lucidShaderProgram, "loopDuration" );
 	GLint uniformTime = glGetUniformLocation ( lucidShaderProgram, "time" );
-	GLint uniformZNear = glGetUniformLocation ( lucidShaderProgram, "zNear" );
-	GLint uniformZFar = glGetUniformLocation ( lucidShaderProgram, "zFar" );
-	GLint uniformFrustum = glGetUniformLocation ( lucidShaderProgram, "frustumScale" );
+	GLint uniformPerspectiveMatrix = glGetUniformLocation ( lucidShaderProgram, "perspectiveMatrix" );
+	
+	float fZnear = 0.5f;
+	float fZfar = 5.0f;
+	float fPerspectiveMatrix[16];
+	memset ( fPerspectiveMatrix, 0, sizeof(float)*16 );
+	fPerspectiveMatrix[0] = 1.0f; // Frustum scale on X
+	fPerspectiveMatrix[5] = 1.0f; // Frustum scale on Y
+	fPerspectiveMatrix[10] = (fZfar + fZnear) / (fZnear - fZfar);
+	fPerspectiveMatrix[14] = (2 * fZfar * fZnear) / (fZnear - fZfar);
+	fPerspectiveMatrix[11] = -1.0f;
 	
 	glUseProgram(lucidShaderProgram);
 	glUniform1f ( uniformLoop, 5.0f );
-	glUniform1f ( uniformZNear, 1.0f );
-	glUniform1f ( uniformZFar, 5.0f );
-	glUniform1f ( uniformFrustum, 1.0f );
+	glUniformMatrix4fv ( uniformPerspectiveMatrix, 1, GL_FALSE, fPerspectiveMatrix );
 	glUseProgram(0);
 	
 	glEnable(GL_CULL_FACE);
