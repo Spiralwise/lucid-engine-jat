@@ -56,7 +56,7 @@ int main( int argc, char** argv ) {
 
     // FIXME What is it ?
     glfwOpenWindowHint(GLFW_FSAA_SAMPLES, 4);
-    glfwOpenWindowHint(GLFW_WINDOW_NO_RESIZE,GL_TRUE);
+    //glfwOpenWindowHint(GLFW_WINDOW_NO_RESIZE,GL_TRUE);
     glfwOpenWindowHint(GLFW_OPENGL_VERSION_MAJOR, 3);
     glfwOpenWindowHint(GLFW_OPENGL_VERSION_MINOR, 3);
     glfwOpenWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -82,6 +82,7 @@ int main( int argc, char** argv ) {
 	/** Initialization **/
     glfwSetWindowTitle( "Lucid 0.0.0" );
 	
+	// Shaders
 	std::vector<GLuint> shaderList;
 	GLuint lucidShaderProgram;
 	
@@ -89,11 +90,12 @@ int main( int argc, char** argv ) {
 	shaderList.push_back( CreateShader(GL_FRAGMENT_SHADER, readFile("shaders/fragmentshader.glsl")) );
 	lucidShaderProgram = CreateProgram(shaderList);
 	glDeleteShader( shaderList[0] ); // TODO : Cette ligne doit être prise en charge par shader.h ?
-	GLint uniformLoop = glGetUniformLocation ( lucidShaderProgram, "loopDuration" );
-	GLint uniformTime = glGetUniformLocation ( lucidShaderProgram, "time" );
+	
+	GLint uniformPositionOffset = glGetUniformLocation ( lucidShaderProgram, "positionOffset" );
 	GLint uniformPerspectiveMatrix = glGetUniformLocation ( lucidShaderProgram, "perspectiveMatrix" );
 	
-	float fZnear = 0.5f;
+		// Perspective Matrix
+	float fZnear = 1.5f;
 	float fZfar = 5.0f;
 	float fPerspectiveMatrix[16];
 	memset ( fPerspectiveMatrix, 0, sizeof(float)*16 );
@@ -104,168 +106,154 @@ int main( int argc, char** argv ) {
 	fPerspectiveMatrix[11] = -1.0f;
 	
 	glUseProgram(lucidShaderProgram);
-	glUniform1f ( uniformLoop, 5.0f );
 	glUniformMatrix4fv ( uniformPerspectiveMatrix, 1, GL_FALSE, fPerspectiveMatrix );
 	glUseProgram(0);
 	
+	// Rendering options
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	glFrontFace(GL_CCW);
 	
 	/** Object Initialisation **/
-	/*const float vertices[] = {
-		 0.0f,    0.5f, 0.0f, 1.0f,
-		 0.5f, -0.366f, 0.0f, 1.0f,
-		-0.5f, -0.366f, 0.0f, 1.0f,
-		 1.0f,    0.0f, 0.0f, 1.0f,
-		 0.0f,    1.0f, 0.0f, 1.0f,
-		 0.0f,    0.0f, 1.0f, 1.0f,
-	};
-	const float vertices2[] = {
-		 0.0f,    0.35f, 0.0f, 1.0f,
-		 0.35f, -0.2f, 0.0f, 1.0f,
-		-0.35f, -0.2f, 0.0f, 1.0f,
-		 1.0f,    0.0f, 0.0f, 1.0f,
-		 0.0f,    1.0f, 0.0f, 1.0f,
-		 0.0f,    0.0f, 1.0f, 1.0f,
-	};*/
-	const float cubeVertices[] = {
-		// front
-		0.0f, 0.0f, 0.0f, 1.0f,
-		1.0f, 0.0f, 0.0f, 1.0f,
-		0.0f, 1.0f, 0.0f, 1.0f,
+	const float cubeVertices [] = {
+		// Positions object 1
+		-0.5f, -0.5f, 0.5f,
+		0.5f, -0.5f, 0.5f,
+		-0.5f, 0.5f, 0.5f,
+		0.5f, 0.5f, 0.5f,
+		-0.5f, -0.5f, -0.5f,
+		0.5f, -0.5f, -0.5f,
+		-0.5f, 0.5f, -0.5f,
+		0.5f, 0.5f, -0.5f,
 		
-		1.0f, 0.0f, 0.0f, 1.0f,
-		1.0f, 1.0f, 0.0f, 1.0f,
-		0.0f, 1.0f, 0.0f, 1.0f,
+		// Positions object 2
+		-0.75f, -0.5f, 0.0f,
+		0.0f, -0.5f, 0.75f,
+		-0.75f, 0.5f, 0.0f,
+		0.0f, 0.5f, 0.75f,
+		0.0f, -0.5f, -0.75f,
+		0.75f, -0.5f, 0.0f,
+		0.0f, 0.5f, -0.75f,
+		0.75f, 0.5f, 0.0f,
 		
-		// right
-		1.0f, 0.0f, 0.0f, 1.0f,
-		1.0f, 0.0f, -1.0f, 1.0f,
-		1.0f, 1.0f, 0.0f, 1.0f,
-		
-		1.0f, 1.0f, 0.0f, 1.0f,
-		1.0f, 0.0f, -1.0f, 1.0f,
-		1.0f, 1.0f, -1.0f, 1.0f,
-		
-		// top
-		0.0f, 1.0f, 0.0f, 1.0f,
-		1.0f, 1.0f, 0.0f, 1.0f,
-		1.0f, 1.0f, -1.0f, 1.0f,
-		
-		1.0f, 1.0f, -1.0f, 1.0f,
-		0.0f, 1.0f, -1.0f, 1.0f,
-		0.0f, 1.0f, 0.0f, 1.0f,
-		
-		// left
-		0.0f, 0.0f, 0.0f, 1.0f,
-		0.0f, 1.0f, -1.0f, 1.0f,
-		0.0f, 0.0f, -1.0f, 1.0f,
-		
-		0.0f, 1.0f, -1.0f, 1.0f,
-		0.0f, 0.0f, 0.0f, 1.0f,
-		0.0f, 1.0f, 0.0f, 1.0f,
-		
-		// bottom
-		0.0f, 0.0f, 0.0f, 1.0f,
-		0.0f, 0.0f, -1.0f, 1.0f,
-		1.0f, 0.0f, 0.0f, 1.0f,
-		
-		1.0f, 0.0f, 0.0f, 1.0f,
-		0.0f, 0.0f, -1.0f, 1.0f,
-		1.0f, 0.0f, -1.0f, 1.0f,
-		
-		// back
-		0.0f, 0.0f, -1.0f, 1.0f,
-		0.0f, 1.0f, -1.0f, 1.0f,
-		1.0f, 1.0f, -1.0f, 1.0f,
-		
-		1.0f, 1.0f, -1.0f, 1.0f,
-		1.0f, 0.0f, -1.0f, 1.0f,
-		0.0f, 0.0f, -1.0f, 1.0f,
-		
-		// COLOR
-		// front
-		0.0f, 0.0f, 0.0f, 1.0f,
-		1.0f, 0.0f, 0.0f, 1.0f,
-		0.0f, 1.0f, 0.0f, 1.0f,
-		
-		1.0f, 0.0f, 0.0f, 1.0f,
-		1.0f, 1.0f, 0.0f, 1.0f,
-		0.0f, 1.0f, 0.0f, 1.0f,
-		
-		// right
-		1.0f, 0.0f, 0.0f, 1.0f,
-		1.0f, 0.0f, 1.0f, 1.0f,
-		1.0f, 1.0f, 0.0f, 1.0f,
-		
-		1.0f, 1.0f, 0.0f, 1.0f,
-		1.0f, 0.0f, 1.0f, 1.0f,
-		1.0f, 1.0f, 1.0f, 1.0f,
-		
-		// top
-		0.0f, 1.0f, 0.0f, 1.0f,
-		1.0f, 1.0f, 0.0f, 1.0f,
-		1.0f, 1.0f, 1.0f, 1.0f,
-		
-		1.0f, 1.0f, 1.0f, 1.0f,
-		0.0f, 1.0f, 1.0f, 1.0f,
-		0.0f, 1.0f, 0.0f, 1.0f,
-		
-		// left
-		0.0f, 0.0f, 0.0f, 1.0f,
-		0.0f, 1.0f, 1.0f, 1.0f,
-		0.0f, 0.0f, 1.0f, 1.0f,
-		
-		0.0f, 1.0f, 1.0f, 1.0f,
-		0.0f, 0.0f, 0.0f, 1.0f,
-		0.0f, 1.0f, 0.0f, 1.0f,
-		
-		// bottom
-		0.0f, 0.0f, 0.0f, 1.0f,
-		0.0f, 0.0f, 1.0f, 1.0f,
-		1.0f, 0.0f, 0.0f, 1.0f,
-		
-		1.0f, 0.0f, 0.0f, 1.0f,
-		0.0f, 0.0f, 1.0f, 1.0f,
-		1.0f, 0.0f, 1.0f, 1.0f,
-		
-		// back
-		0.0f, 0.0f, 1.0f, 1.0f,
-		0.0f, 1.0f, 1.0f, 1.0f,
-		1.0f, 1.0f, 1.0f, 1.0f,
-		
-		1.0f, 1.0f, 1.0f, 1.0f,
-		1.0f, 0.0f, 1.0f, 1.0f,
-		0.0f, 0.0f, 1.0f, 1.0f
+		// Colors
+		0.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 1.0f,
+		1.0f, 0.0f, 1.0f,
+		0.0f, 1.0f, 1.0f,
+		1.0f, 1.0f, 1.0f,
 	};
 	
-	GLuint objectPosition;
-	glGenBuffers(1, &objectPosition);
+	const GLshort cubeIndexes [] = {
+		
+		// front
+		0, 1, 3,
+		0, 3, 2,
+		
+		// right
+		1, 5, 7,
+		1, 7, 3,
+		
+		// top
+		3, 7, 6,
+		3, 6, 2,
+		
+		// left
+		0, 6, 4,
+		0, 2, 6,
+		
+		// bottom
+		1, 0, 4,
+		1, 4, 5,
+		
+		// back
+		5, 4, 6,
+		5, 6, 7
+	};
+	
+	float fLoopDuration = 5.0f;
+	
+	size_t cubeVerticesOffset = sizeof(float) * 3 * 8;
+	size_t colorDataOffset = sizeof(float) * 3 * 8 * 2;
+	
+	// Buffers
+	GLuint vertexBufferObject;
+	GLuint indexBufferObject;
+	GLuint vao1, vao2;
+	
+		// Vertex Array
+	glGenBuffers(1, &vertexBufferObject);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	
+		// Element Array
+	glGenBuffers(1, &indexBufferObject);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferObject);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cubeIndexes), cubeIndexes, GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	
+		// VAO's
+	glGenVertexArrays(1, &vao1);
+	glBindVertexArray(vao1);
+	
+	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)colorDataOffset);
+	
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferObject);
+	
+	glBindVertexArray(0);
+	
+	glGenVertexArrays(1, &vao2);
+	glBindVertexArray(vao2);
+	
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)cubeVerticesOffset);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)colorDataOffset);
+	
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferObject);
+	
+	glBindVertexArray(0);
+	
 
-	/** Display */
+	/** Display **/
 	dLastTime = glfwGetTime();
-	size_t colorData = sizeof(cubeVertices) / 2;
+	size_t indexArraySize = sizeof(cubeIndexes) / sizeof(GLshort);
+	float fTimeScale = 3.14159f * 2.0f / fLoopDuration;
+	float fTimeOffset;
     do {
 	
+		fTimeOffset = fmod(glfwGetTime(), fLoopDuration);
+		
 		glClearColor( 0.062f, 0.157f, 0.349f, 0.0f );
 		glClear(GL_COLOR_BUFFER_BIT);
 		
 		glUseProgram(lucidShaderProgram);
-		glUniform1f ( uniformTime, glfwGetTime() );
 		
-		glBindBuffer(GL_ARRAY_BUFFER, objectPosition);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
+		glBindVertexArray(vao1);
+		glUniform4f(uniformPositionOffset,
+			cos(fTimeOffset * fTimeScale),
+			sin(fTimeOffset * fTimeScale),
+			-3.0f,
+			0.0f);
+		glDrawElements(GL_TRIANGLES, indexArraySize, GL_UNSIGNED_SHORT, 0);
 		
-		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
-		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 0, (void*)colorData);
+		glBindVertexArray(vao2);
+		glUniform4f(uniformPositionOffset,
+			cos(fTimeOffset * fTimeScale) -0.5f,
+			sin(fTimeOffset * fTimeScale) -0.5f,
+			-2.5f,
+			0.0f);
+		glDrawElements(GL_TRIANGLES, indexArraySize, GL_UNSIGNED_SHORT, 0);
 		
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-		
-		glDisableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
 
 		glUseProgram(0);
 		
@@ -280,6 +268,10 @@ int main( int argc, char** argv ) {
               && glfwGetWindowParam( GLFW_OPENED ));
 
 	/** Termination **/
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
     glfwTerminate();
 
 	cout << "Goodbye ! (Mean rendering time=" << dMeanRenderTime*1000 << ")" << endl;
