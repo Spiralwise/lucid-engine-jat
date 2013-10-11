@@ -39,6 +39,7 @@ string readFile( const string &filename ) {
 	return output;
 }
 
+
 /** GLFW Key Callback */
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
 
@@ -47,18 +48,94 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 }
 
 
-int main( int argc, char** argv ) {
+/** Variables **/
+GLFWwindow*			myWindow;
 
-    cout << "Lucid Engine v0.0.0" << endl;
+std::vector<GLuint> shaderList;
+GLuint				lucidShaderProgram;
+GLuint				vao1, vao2;
+
+GLint uniformPositionOffset;
+GLint uniformPerspectiveMatrix;
+
+float fZnear 		= 1.5f;
+float fZfar 		= 5.0f;
+float fPerspectiveMatrix[16];
+
+float fLoopDuration = 5.0f;
+
+double dMeanRenderTime = .0f;
+unsigned uRenderTimeNumber = 0; // TODO En faire une classe dans le cadre de l'étude des performances.
+double dLastTime; 
+
+
+/** Object Initialisation **/
+const float cubeVertices [] = {
+	// Positions object 1
+	-0.5f, -0.5f, 0.5f,
+	0.5f, -0.5f, 0.5f,
+	-0.5f, 0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f,
+	-0.5f, -0.5f, -0.5f,
+	0.5f, -0.5f, -0.5f,
+	-0.5f, 0.5f, -0.5f,
+	0.5f, 0.5f, -0.5f,
 	
-	double dMeanRenderTime = .0f;
-	unsigned uRenderTimeNumber = 0; // TODO En faire une classe dans le cadre de l'étude des performances.
-	double dLastTime; 
+	// Positions object 2
+	-0.75f, -0.5f, 0.0f,
+	0.0f, -0.5f, 0.75f,
+	-0.75f, 0.5f, 0.0f,
+	0.0f, 0.5f, 0.75f,
+	0.0f, -0.5f, -0.75f,
+	0.75f, -0.5f, 0.0f,
+	0.0f, 0.5f, -0.75f,
+	0.75f, 0.5f, 0.0f,
+	
+	// Colors
+	0.0f, 0.0f, 0.0f,
+	1.0f, 0.0f, 0.0f,
+	0.0f, 1.0f, 0.0f,
+	1.0f, 1.0f, 0.0f,
+	0.0f, 0.0f, 1.0f,
+	1.0f, 0.0f, 1.0f,
+	0.0f, 1.0f, 1.0f,
+	1.0f, 1.0f, 1.0f,
+};
 
-    /** GLFW **/
-    if ( !glfwInit() ) {
+const GLshort cubeIndexes [] = {
+	
+	// front
+	0, 1, 3,
+	0, 3, 2,
+	
+	// right
+	1, 5, 7,
+	1, 7, 3,
+	
+	// top
+	3, 7, 6,
+	3, 6, 2,
+	
+	// left
+	0, 6, 4,
+	0, 2, 6,
+	
+	// bottom
+	1, 0, 4,
+	1, 4, 5,
+	
+	// back
+	5, 4, 6,
+	5, 6, 7
+};
+
+
+/** GLFW **/
+unsigned initGLFW () {
+
+	if ( !glfwInit() ) {
         cout << "Failed to initialize GLFW. The application is terminated." << endl;
-        return EXIT_FAILURE;
+        return 0;
     }
 
     glfwWindowHint(GLFW_SAMPLES, 4);
@@ -67,7 +144,7 @@ int main( int argc, char** argv ) {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	GLFWwindow* myWindow = glfwCreateWindow( 1024, 768, "Lucid 0.0.0", NULL, NULL );
+	myWindow = glfwCreateWindow( 1024, 768, "Lucid 0.0.0", NULL, NULL );
     if ( !myWindow ) {
         cout << "Failed to open GLFW window. The application is terminated." << endl;
         glfwTerminate();
@@ -78,8 +155,13 @@ int main( int argc, char** argv ) {
 
     cout << "GLFW initialized." << endl;
 	
-	
-	/** GLEW/OpenGL **/
+	return 1;
+}
+
+
+/** GLEW/OpenGL **/
+unsigned initGLEW () {
+
 	glewExperimental = true;
     if ( glewInit() != GLEW_OK ) {
         cout << "Failed to initialize GLEW. The application is terminated." << endl;
@@ -87,25 +169,24 @@ int main( int argc, char** argv ) {
     }
 	
 	cout << "GLEW initialized." << endl;
+	
+	return 1;
+}
 
-	
-	/** Initialization **/
+
+/** Shaders **/
+void initShaders () {
+
 	// Shaders
-	std::vector<GLuint> shaderList;
-	GLuint lucidShaderProgram;
-	
 	shaderList.push_back( CreateShader(GL_VERTEX_SHADER, readFile("shaders/vertexshader.glsl")) );
 	shaderList.push_back( CreateShader(GL_FRAGMENT_SHADER, readFile("shaders/fragmentshader.glsl")) );
 	lucidShaderProgram = CreateProgram(shaderList);
 	glDeleteShader( shaderList[0] ); // TODO : Cette ligne doit être prise en charge par shader.h ?
 	
-	GLint uniformPositionOffset = glGetUniformLocation ( lucidShaderProgram, "positionOffset" );
-	GLint uniformPerspectiveMatrix = glGetUniformLocation ( lucidShaderProgram, "perspectiveMatrix" );
+	uniformPositionOffset 		= glGetUniformLocation ( lucidShaderProgram, "positionOffset" );
+	uniformPerspectiveMatrix 	= glGetUniformLocation ( lucidShaderProgram, "perspectiveMatrix" );
 	
 		// Perspective Matrix
-	float fZnear = 1.5f;
-	float fZfar = 5.0f;
-	float fPerspectiveMatrix[16];
 	memset ( fPerspectiveMatrix, 0, sizeof(float)*16 );
 	fPerspectiveMatrix[0] = 1.0f; // Frustum scale on X
 	fPerspectiveMatrix[5] = 1.0f; // Frustum scale on Y
@@ -118,79 +199,29 @@ int main( int argc, char** argv ) {
 	glUseProgram(0);
 	
 	// Rendering options
+		// Depth test
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
+	glDepthFunc(GL_LEQUAL);
+	glDepthRange(0.0f, 1.0f);
+	
+		// Face culling
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	glFrontFace(GL_CCW);
-	
-	/** Object Initialisation **/
-	const float cubeVertices [] = {
-		// Positions object 1
-		-0.5f, -0.5f, 0.5f,
-		0.5f, -0.5f, 0.5f,
-		-0.5f, 0.5f, 0.5f,
-		0.5f, 0.5f, 0.5f,
-		-0.5f, -0.5f, -0.5f,
-		0.5f, -0.5f, -0.5f,
-		-0.5f, 0.5f, -0.5f,
-		0.5f, 0.5f, -0.5f,
-		
-		// Positions object 2
-		-0.75f, -0.5f, 0.0f,
-		0.0f, -0.5f, 0.75f,
-		-0.75f, 0.5f, 0.0f,
-		0.0f, 0.5f, 0.75f,
-		0.0f, -0.5f, -0.75f,
-		0.75f, -0.5f, 0.0f,
-		0.0f, 0.5f, -0.75f,
-		0.75f, 0.5f, 0.0f,
-		
-		// Colors
-		0.0f, 0.0f, 0.0f,
-		1.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f,
-		1.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 1.0f,
-		1.0f, 0.0f, 1.0f,
-		0.0f, 1.0f, 1.0f,
-		1.0f, 1.0f, 1.0f,
-	};
-	
-	const GLshort cubeIndexes [] = {
-		
-		// front
-		0, 1, 3,
-		0, 3, 2,
-		
-		// right
-		1, 5, 7,
-		1, 7, 3,
-		
-		// top
-		3, 7, 6,
-		3, 6, 2,
-		
-		// left
-		0, 6, 4,
-		0, 2, 6,
-		
-		// bottom
-		1, 0, 4,
-		1, 4, 5,
-		
-		// back
-		5, 4, 6,
-		5, 6, 7
-	};
-	
-	float fLoopDuration = 5.0f;
-	
+}
+
+
+/** Buffes **/
+void initBuffers () {
+
 	size_t cubeVerticesOffset = sizeof(float) * 3 * 8;
 	size_t colorDataOffset = sizeof(float) * 3 * 8 * 2;
 	
 	// Buffers
 	GLuint vertexBufferObject;
 	GLuint indexBufferObject;
-	GLuint vao1, vao2;
+	
 	
 		// Vertex Array
 	glGenBuffers(1, &vertexBufferObject);
@@ -229,7 +260,32 @@ int main( int argc, char** argv ) {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferObject);
 	
 	glBindVertexArray(0);
+}
+
+
+/** Termination **/
+int close () {
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
+    glfwTerminate();
+
+	cout << "Goodbye ! (Mean rendering time=" << dMeanRenderTime*1000 << ")" << endl;
 	
+	return EXIT_SUCCESS;
+}
+
+int main( int argc, char** argv ) {
+
+    cout << "Lucid Engine v0.0.0" << endl;
+
+	if ( !initGLFW() || !initGLEW() )
+		return EXIT_FAILURE;
+	
+	initShaders();
+	initBuffers();
 
 	/** Display **/
 	dLastTime = glfwGetTime();
@@ -241,7 +297,8 @@ int main( int argc, char** argv ) {
 		fTimeOffset = fmod(glfwGetTime(), fLoopDuration);
 		
 		glClearColor( 0.062f, 0.157f, 0.349f, 0.0f );
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClearDepth( 1.0f );
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
 		glUseProgram(lucidShaderProgram);
 		
@@ -255,9 +312,9 @@ int main( int argc, char** argv ) {
 		
 		glBindVertexArray(vao2);
 		glUniform4f(uniformPositionOffset,
-			cos(fTimeOffset * fTimeScale) -0.5f,
+			cos(fTimeOffset * fTimeScale) -2.5f,
 			sin(fTimeOffset * fTimeScale) -0.5f,
-			-2.5f,
+			-4.5f,
 			0.0f);
 		glDrawElements(GL_TRIANGLES, indexArraySize, GL_UNSIGNED_SHORT, 0);
 		
@@ -276,15 +333,6 @@ int main( int argc, char** argv ) {
 		
     } while ( !glfwWindowShouldClose( myWindow ) );
 
-	/** Termination **/
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	glDisableVertexAttribArray(0);
-	glDisableVertexAttribArray(1);
-    glfwTerminate();
-
-	cout << "Goodbye ! (Mean rendering time=" << dMeanRenderTime*1000 << ")" << endl;
-
-    return EXIT_SUCCESS;
+	return close();
 }
 
