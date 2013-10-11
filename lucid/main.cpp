@@ -5,17 +5,28 @@
 #include <fstream>
 #include <vector>
 
-// OpenGL Libraries>
+// OpenGL Libraries
 #include <GL/glew.h>
 #define GLFW_DLL
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 // Lucid Includes
 #include "shader.h"
 
 using namespace std;
 using namespace glm;
+
+
+// Defines intearction
+#define INTERACTION_STOP 0
+#define INTERACTION_FORWARD 1
+#define INTERACTION_BACKWARD 2
+
+#define INTERACTION_ROTATION_LEFT 13
+#define INTERACTION_ROTATION_RIGHT 14
 
 
 /**
@@ -39,31 +50,34 @@ string readFile( const string &filename ) {
 	return output;
 }
 
+float getFrustumScale ( float fov ) {
 
-/** GLFW Key Callback */
-static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, GL_TRUE);
+	float fov_radian = fov * 3.14159f * 2.0f / 360.0f;
+	return 1.0f / tan(fov_radian/2.0f);
 }
 
 
 /** Variables **/
-GLFWwindow*			myWindow;
+GLFWwindow* myWindow;
 
-std::vector<GLuint> shaderList;
-GLuint				lucidShaderProgram;
-GLuint				vao1, vao2;
+GLuint lucidShaderProgram;
+GLuint vao1, vao2;
 
-GLint uniformPositionOffset;
+GLuint attribPosition;
+GLuint attribColor;
+
+GLint uniformModelMatrix;
 GLint uniformPerspectiveMatrix;
 
-float fZnear 		= 1.5f;
-float fZfar 		= 5.0f;
-float fPerspectiveMatrix[16];
+const float fFrustumScale	= getFrustumScale(45.0f);
+const float fZnear 			= 1.0f;
+const float fZfar 			= 10.0f;
+glm::mat4 matPerspectiveMatrix (0.0f);
 
-float fLoopDuration = 5.0f;
+	// Interactions
+unsigned uInteractionState = INTERACTION_STOP;
 
+	// Performance
 double dMeanRenderTime = .0f;
 unsigned uRenderTimeNumber = 0; // TODO En faire une classe dans le cadre de l'étude des performances.
 double dLastTime; 
@@ -129,6 +143,46 @@ const GLshort cubeIndexes [] = {
 	5, 6, 7
 };
 
+glm::mat4 matrixObject1 = glm::translate( glm::mat4(1.0f), glm::vec3(-0.0f, 0.0f, -3.5f) );
+glm::mat4 matrixObject2 = glm::translate( glm::mat4(1.0f), glm::vec3(-1.5f, 0.0f, -1.0f) );
+
+
+/** GLFW Key Callback */
+static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+
+	switch ( action ) {
+	
+		case GLFW_PRESS:
+			switch ( key ) {
+			
+				case GLFW_KEY_ESCAPE:
+					glfwSetWindowShouldClose(window, GL_TRUE);
+					break;
+					
+				case GLFW_KEY_Z:
+					uInteractionState = INTERACTION_FORWARD;
+					break;
+					
+				case GLFW_KEY_S:
+					uInteractionState = INTERACTION_BACKWARD;
+					break;
+					
+				case GLFW_KEY_A:
+					uInteractionState = INTERACTION_ROTATION_LEFT;
+					break;
+					
+				case GLFW_KEY_E:
+					uInteractionState = INTERACTION_ROTATION_RIGHT;
+					break;
+			}
+			break;
+			
+		case GLFW_RELEASE:
+			uInteractionState = INTERACTION_STOP;
+			break;
+	}
+}
+
 
 /** GLFW **/
 unsigned initGLFW () {
@@ -178,24 +232,27 @@ unsigned initGLEW () {
 void initShaders () {
 
 	// Shaders
+	std::vector<GLuint> shaderList;
 	shaderList.push_back( CreateShader(GL_VERTEX_SHADER, readFile("shaders/vertexshader.glsl")) );
 	shaderList.push_back( CreateShader(GL_FRAGMENT_SHADER, readFile("shaders/fragmentshader.glsl")) );
 	lucidShaderProgram = CreateProgram(shaderList);
 	glDeleteShader( shaderList[0] ); // TODO : Cette ligne doit être prise en charge par shader.h ?
 	
-	uniformPositionOffset 		= glGetUniformLocation ( lucidShaderProgram, "positionOffset" );
+	attribPosition				= glGetAttribLocation ( lucidShaderProgram, "position" );
+	attribColor					= glGetAttribLocation ( lucidShaderProgram, "color" );
+	
+	uniformModelMatrix	 		= glGetUniformLocation ( lucidShaderProgram, "modelMatrix" );
 	uniformPerspectiveMatrix 	= glGetUniformLocation ( lucidShaderProgram, "perspectiveMatrix" );
 	
 		// Perspective Matrix
-	memset ( fPerspectiveMatrix, 0, sizeof(float)*16 );
-	fPerspectiveMatrix[0] = 1.0f; // Frustum scale on X
-	fPerspectiveMatrix[5] = 1.0f; // Frustum scale on Y
-	fPerspectiveMatrix[10] = (fZfar + fZnear) / (fZnear - fZfar);
-	fPerspectiveMatrix[14] = (2 * fZfar * fZnear) / (fZnear - fZfar);
-	fPerspectiveMatrix[11] = -1.0f;
+	matPerspectiveMatrix[0].x = fFrustumScale/1.333f; // Frustum scale on X <-- Aspect ratio here
+	matPerspectiveMatrix[1].y = fFrustumScale; // Frustum scale on Y
+	matPerspectiveMatrix[2].z = (fZfar + fZnear) / (fZnear - fZfar);
+	matPerspectiveMatrix[3].z = (2 * fZfar * fZnear) / (fZnear - fZfar);
+	matPerspectiveMatrix[2].w = -1.0f;
 	
 	glUseProgram(lucidShaderProgram);
-	glUniformMatrix4fv ( uniformPerspectiveMatrix, 1, GL_FALSE, fPerspectiveMatrix );
+	glUniformMatrix4fv ( uniformPerspectiveMatrix, 1, GL_FALSE, glm::value_ptr(matPerspectiveMatrix) );
 	glUseProgram(0);
 	
 	// Rendering options
@@ -221,7 +278,6 @@ void initBuffers () {
 	// Buffers
 	GLuint vertexBufferObject;
 	GLuint indexBufferObject;
-	
 	
 		// Vertex Array
 	glGenBuffers(1, &vertexBufferObject);
@@ -277,6 +333,7 @@ int close () {
 	return EXIT_SUCCESS;
 }
 
+
 int main( int argc, char** argv ) {
 
     cout << "Lucid Engine v0.0.0" << endl;
@@ -286,15 +343,13 @@ int main( int argc, char** argv ) {
 	
 	initShaders();
 	initBuffers();
-
+	
 	/** Display **/
 	dLastTime = glfwGetTime();
 	size_t indexArraySize = sizeof(cubeIndexes) / sizeof(GLshort);
-	float fTimeScale = 3.14159f * 2.0f / fLoopDuration;
-	float fTimeOffset;
-    do {
+	glm::mat4 matrixModelObject2;
 	
-		fTimeOffset = fmod(glfwGetTime(), fLoopDuration);
+    do {
 		
 		glClearColor( 0.062f, 0.157f, 0.349f, 0.0f );
 		glClearDepth( 1.0f );
@@ -303,19 +358,13 @@ int main( int argc, char** argv ) {
 		glUseProgram(lucidShaderProgram);
 		
 		glBindVertexArray(vao1);
-		glUniform4f(uniformPositionOffset,
-			cos(fTimeOffset * fTimeScale),
-			sin(fTimeOffset * fTimeScale),
-			-3.0f,
-			0.0f);
+		glUniformMatrix4fv(uniformModelMatrix, 1, GL_FALSE, glm::value_ptr(matrixObject1));
+		
 		glDrawElements(GL_TRIANGLES, indexArraySize, GL_UNSIGNED_SHORT, 0);
 		
 		glBindVertexArray(vao2);
-		glUniform4f(uniformPositionOffset,
-			cos(fTimeOffset * fTimeScale) -2.5f,
-			sin(fTimeOffset * fTimeScale) -0.5f,
-			-4.5f,
-			0.0f);
+		matrixModelObject2 = matrixObject1 * matrixObject2;
+		glUniformMatrix4fv(uniformModelMatrix, 1, GL_FALSE, glm::value_ptr(matrixModelObject2));
 		glDrawElements(GL_TRIANGLES, indexArraySize, GL_UNSIGNED_SHORT, 0);
 		
 		glBindVertexArray(0);
@@ -329,7 +378,26 @@ int main( int argc, char** argv ) {
 		dMeanRenderTime /= ++uRenderTimeNumber;
 		dLastTime = glfwGetTime();
 		
+		// Events
 		glfwPollEvents();
+		switch ( uInteractionState ) {
+		
+			case INTERACTION_FORWARD: 
+				matrixObject1 = glm::translate( matrixObject1, glm::vec3(0.0f, 0.0f, -0.001f) );
+				break;
+				
+			case INTERACTION_BACKWARD:
+				matrixObject1 = glm::translate( matrixObject1, glm::vec3(0.0f, 0.0f, 0.001f) );
+				break;
+				
+			case INTERACTION_ROTATION_LEFT:
+				matrixObject1 = glm::rotate( matrixObject1, 0.01f, glm::vec3(0.0f, 1.0f, 0.0f) );
+				break;
+				
+			case INTERACTION_ROTATION_RIGHT:
+				matrixObject1 = glm::rotate( matrixObject1, 0.01f, glm::vec3(0.0f, -1.0f, 0.0f) );
+				break;
+		}
 		
     } while ( !glfwWindowShouldClose( myWindow ) );
 
