@@ -161,6 +161,30 @@ lucid/shader.cpp.s:
 	$(MAKE) -f CMakeFiles\Lucid.dir\build.make CMakeFiles/Lucid.dir/lucid/shader.cpp.s
 .PHONY : lucid/shader.cpp.s
 
+lucid/vertex.obj: lucid/vertex.cpp.obj
+.PHONY : lucid/vertex.obj
+
+# target to build an object file
+lucid/vertex.cpp.obj:
+	$(MAKE) -f CMakeFiles\Lucid.dir\build.make CMakeFiles/Lucid.dir/lucid/vertex.cpp.obj
+.PHONY : lucid/vertex.cpp.obj
+
+lucid/vertex.i: lucid/vertex.cpp.i
+.PHONY : lucid/vertex.i
+
+# target to preprocess a source file
+lucid/vertex.cpp.i:
+	$(MAKE) -f CMakeFiles\Lucid.dir\build.make CMakeFiles/Lucid.dir/lucid/vertex.cpp.i
+.PHONY : lucid/vertex.cpp.i
+
+lucid/vertex.s: lucid/vertex.cpp.s
+.PHONY : lucid/vertex.s
+
+# target to generate assembly for a file
+lucid/vertex.cpp.s:
+	$(MAKE) -f CMakeFiles\Lucid.dir\build.make CMakeFiles/Lucid.dir/lucid/vertex.cpp.s
+.PHONY : lucid/vertex.cpp.s
+
 # Help Target
 help:
 	@echo The following are some of the valid targets for this Makefile:
@@ -176,6 +200,9 @@ help:
 	@echo ... lucid/shader.obj
 	@echo ... lucid/shader.i
 	@echo ... lucid/shader.s
+	@echo ... lucid/vertex.obj
+	@echo ... lucid/vertex.i
+	@echo ... lucid/vertex.s
 .PHONY : help
 
 

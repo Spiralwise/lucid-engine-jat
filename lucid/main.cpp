@@ -14,7 +14,8 @@
 #include <glm/gtc/type_ptr.hpp>
 
 // Lucid Includes
-#include "shader.h"
+#include "shader.hpp"
+#include "vertex.hpp"
 
 using namespace std;
 using namespace glm;
