@@ -1,3 +1,6 @@
+#ifndef _LUCID_VERTEX_
+#define _LUCID_VERTEX_
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -17,3 +20,5 @@ public:
 	void translate (const glm::vec3&);
 	
 };
+
+#endif

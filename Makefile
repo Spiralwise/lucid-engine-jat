@@ -137,6 +137,54 @@ lucid/main.cpp.s:
 	$(MAKE) -f CMakeFiles\Lucid.dir\build.make CMakeFiles/Lucid.dir/lucid/main.cpp.s
 .PHONY : lucid/main.cpp.s
 
+lucid/mesh.obj: lucid/mesh.cpp.obj
+.PHONY : lucid/mesh.obj
+
+# target to build an object file
+lucid/mesh.cpp.obj:
+	$(MAKE) -f CMakeFiles\Lucid.dir\build.make CMakeFiles/Lucid.dir/lucid/mesh.cpp.obj
+.PHONY : lucid/mesh.cpp.obj
+
+lucid/mesh.i: lucid/mesh.cpp.i
+.PHONY : lucid/mesh.i
+
+# target to preprocess a source file
+lucid/mesh.cpp.i:
+	$(MAKE) -f CMakeFiles\Lucid.dir\build.make CMakeFiles/Lucid.dir/lucid/mesh.cpp.i
+.PHONY : lucid/mesh.cpp.i
+
+lucid/mesh.s: lucid/mesh.cpp.s
+.PHONY : lucid/mesh.s
+
+# target to generate assembly for a file
+lucid/mesh.cpp.s:
+	$(MAKE) -f CMakeFiles\Lucid.dir\build.make CMakeFiles/Lucid.dir/lucid/mesh.cpp.s
+.PHONY : lucid/mesh.cpp.s
+
+lucid/renderer.obj: lucid/renderer.cpp.obj
+.PHONY : lucid/renderer.obj
+
+# target to build an object file
+lucid/renderer.cpp.obj:
+	$(MAKE) -f CMakeFiles\Lucid.dir\build.make CMakeFiles/Lucid.dir/lucid/renderer.cpp.obj
+.PHONY : lucid/renderer.cpp.obj
+
+lucid/renderer.i: lucid/renderer.cpp.i
+.PHONY : lucid/renderer.i
+
+# target to preprocess a source file
+lucid/renderer.cpp.i:
+	$(MAKE) -f CMakeFiles\Lucid.dir\build.make CMakeFiles/Lucid.dir/lucid/renderer.cpp.i
+.PHONY : lucid/renderer.cpp.i
+
+lucid/renderer.s: lucid/renderer.cpp.s
+.PHONY : lucid/renderer.s
+
+# target to generate assembly for a file
+lucid/renderer.cpp.s:
+	$(MAKE) -f CMakeFiles\Lucid.dir\build.make CMakeFiles/Lucid.dir/lucid/renderer.cpp.s
+.PHONY : lucid/renderer.cpp.s
+
 lucid/shader.obj: lucid/shader.cpp.obj
 .PHONY : lucid/shader.obj
 
@@ -160,6 +208,30 @@ lucid/shader.s: lucid/shader.cpp.s
 lucid/shader.cpp.s:
 	$(MAKE) -f CMakeFiles\Lucid.dir\build.make CMakeFiles/Lucid.dir/lucid/shader.cpp.s
 .PHONY : lucid/shader.cpp.s
+
+lucid/utils.obj: lucid/utils.cpp.obj
+.PHONY : lucid/utils.obj
+
+# target to build an object file
+lucid/utils.cpp.obj:
+	$(MAKE) -f CMakeFiles\Lucid.dir\build.make CMakeFiles/Lucid.dir/lucid/utils.cpp.obj
+.PHONY : lucid/utils.cpp.obj
+
+lucid/utils.i: lucid/utils.cpp.i
+.PHONY : lucid/utils.i
+
+# target to preprocess a source file
+lucid/utils.cpp.i:
+	$(MAKE) -f CMakeFiles\Lucid.dir\build.make CMakeFiles/Lucid.dir/lucid/utils.cpp.i
+.PHONY : lucid/utils.cpp.i
+
+lucid/utils.s: lucid/utils.cpp.s
+.PHONY : lucid/utils.s
+
+# target to generate assembly for a file
+lucid/utils.cpp.s:
+	$(MAKE) -f CMakeFiles\Lucid.dir\build.make CMakeFiles/Lucid.dir/lucid/utils.cpp.s
+.PHONY : lucid/utils.cpp.s
 
 lucid/vertex.obj: lucid/vertex.cpp.obj
 .PHONY : lucid/vertex.obj
@@ -197,9 +269,18 @@ help:
 	@echo ... lucid/main.obj
 	@echo ... lucid/main.i
 	@echo ... lucid/main.s
+	@echo ... lucid/mesh.obj
+	@echo ... lucid/mesh.i
+	@echo ... lucid/mesh.s
+	@echo ... lucid/renderer.obj
+	@echo ... lucid/renderer.i
+	@echo ... lucid/renderer.s
 	@echo ... lucid/shader.obj
 	@echo ... lucid/shader.i
 	@echo ... lucid/shader.s
+	@echo ... lucid/utils.obj
+	@echo ... lucid/utils.i
+	@echo ... lucid/utils.s
 	@echo ... lucid/vertex.obj
 	@echo ... lucid/vertex.i
 	@echo ... lucid/vertex.s
