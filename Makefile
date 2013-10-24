@@ -113,6 +113,30 @@ Lucid/fast:
 	$(MAKE) -f CMakeFiles\Lucid.dir\build.make CMakeFiles/Lucid.dir/build
 .PHONY : Lucid/fast
 
+lucid/camera.obj: lucid/camera.cpp.obj
+.PHONY : lucid/camera.obj
+
+# target to build an object file
+lucid/camera.cpp.obj:
+	$(MAKE) -f CMakeFiles\Lucid.dir\build.make CMakeFiles/Lucid.dir/lucid/camera.cpp.obj
+.PHONY : lucid/camera.cpp.obj
+
+lucid/camera.i: lucid/camera.cpp.i
+.PHONY : lucid/camera.i
+
+# target to preprocess a source file
+lucid/camera.cpp.i:
+	$(MAKE) -f CMakeFiles\Lucid.dir\build.make CMakeFiles/Lucid.dir/lucid/camera.cpp.i
+.PHONY : lucid/camera.cpp.i
+
+lucid/camera.s: lucid/camera.cpp.s
+.PHONY : lucid/camera.s
+
+# target to generate assembly for a file
+lucid/camera.cpp.s:
+	$(MAKE) -f CMakeFiles\Lucid.dir\build.make CMakeFiles/Lucid.dir/lucid/camera.cpp.s
+.PHONY : lucid/camera.cpp.s
+
 lucid/main.obj: lucid/main.cpp.obj
 .PHONY : lucid/main.obj
 
@@ -266,6 +290,9 @@ help:
 	@echo ... Lucid
 	@echo ... edit_cache
 	@echo ... rebuild_cache
+	@echo ... lucid/camera.obj
+	@echo ... lucid/camera.i
+	@echo ... lucid/camera.s
 	@echo ... lucid/main.obj
 	@echo ... lucid/main.i
 	@echo ... lucid/main.s

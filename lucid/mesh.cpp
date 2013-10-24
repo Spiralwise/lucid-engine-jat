@@ -71,7 +71,7 @@ Mesh Mesh::generateCube () {
 		5, 6, 7
 	};
 	
-	return Mesh (cubeVertices, sizeof(cubeVertices)/sizeof(float), cubeIndexes, sizeof(cubeIndexes)/sizeof(short)); /* TODO : Vérifier que c'est correct en terme de création d'objet*/
+	return Mesh (cubeVertices, sizeof(cubeVertices)/sizeof(float), cubeIndexes, sizeof(cubeIndexes)/sizeof(short));
 }
 
 

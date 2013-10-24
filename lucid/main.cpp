@@ -161,9 +161,11 @@ int main( int argc, char** argv ) {
 	
 	renderer = new Renderer();
 
+	Camera cam   = Camera(45.0f, 10.0f);
 	Mesh object1 = Mesh::generateCube();
 	Mesh object2 = Mesh::generateCube();
 	
+	renderer->setCamera (cam);
 	renderer->addMesh (object1);
 	renderer->addMesh (object2);
 	

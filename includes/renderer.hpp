@@ -9,7 +9,7 @@
 
 #include "mesh.hpp"
 #include "shader.hpp"
-#include "renderer.hpp"
+#include "camera.hpp"
 
 class Renderer {
 
@@ -38,6 +38,7 @@ public:
 	Renderer ();
 	~Renderer ();
 	void addMesh (Mesh&);
+	void setCamera (Camera&);
 	void draw ();
 	void close ();
 };

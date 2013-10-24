@@ -1,5 +1,6 @@
-#include "renderer.hpp"
 #include <iostream>
+
+#include "renderer.hpp"
 
 Renderer::Renderer () {
 
@@ -51,6 +52,11 @@ void Renderer::addMesh (Mesh& mesh) {
 	vaos.push_back (nextVAO);
 	
 	needToUpdate = true;
+}
+
+
+void Renderer::setCamera (Camera& cam) {
+	shader->updatePerspectiveMatrix (cam.getPerspectiveMatrix());
 }
 
 
@@ -112,6 +118,8 @@ void Renderer::update () {
 
 void Renderer::draw () {
 	
+	shader->useProgram(true);
+	
 	// Update if needed
 	if (needToUpdate)
 		update();
@@ -120,8 +128,7 @@ void Renderer::draw () {
 	glClearColor( 0.062f, 0.157f, 0.349f, 0.0f );
 	glClearDepth( 1.0f );
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	shader->useProgram(true);
-		
+	
 	// Update model matrix
 	for ( int i = 0; i < vaos.size(); i++ ) {
 		glBindVertexArray(*(vaos[i]));

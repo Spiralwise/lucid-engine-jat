@@ -4,25 +4,14 @@
 
 using namespace std;
 
-float getFrustumScale ( float fov ) { // -> Camera
-
-	float fov_radian = fov * 3.14159f * 2.0f / 360.0f;
-	return 1.0f / tan(fov_radian/2.0f);
-} /* TODO : Oui, à l'arrache.... */
 
 Shader::Shader () {
 
-	fFrustumScale = getFrustumScale(45.0f); // -> Camera
-	fZnear        = 1.0f; // -> Camera
-	fZfar         = 10.0f; // -> Camera
-	glm::mat4 matPerspectiveMatrix = glm::mat4 (0.0f); // -> Camera
-
-	// Shaders
 	std::vector<GLuint> shaderList;
 	shaderList.push_back( CreateShader(GL_VERTEX_SHADER, LUtils::readFile("shaders/vertexshader.glsl")) );
 	shaderList.push_back( CreateShader(GL_FRAGMENT_SHADER, LUtils::readFile("shaders/fragmentshader.glsl")) );
 	lucidShaderProgram = CreateProgram(shaderList);
-	glDeleteShader( shaderList[0] ); // TODO : Cette ligne doit être prise en charge par shader.h ?
+	glDeleteShader( shaderList[0] );
 	
 	attribPosition				= glGetAttribLocation ( lucidShaderProgram, "position" );
 	attribColor					= glGetAttribLocation ( lucidShaderProgram, "color" );
@@ -30,21 +19,9 @@ Shader::Shader () {
 	uniformModelMatrix	 		= glGetUniformLocation ( lucidShaderProgram, "modelMatrix" );
 	uniformPerspectiveMatrix 	= glGetUniformLocation ( lucidShaderProgram, "perspectiveMatrix" );
 	
-		// Perspective Matrix
-	matPerspectiveMatrix[0].x = fFrustumScale/1.333f; // Frustum scale on X <-- Aspect ratio here
-	matPerspectiveMatrix[1].y = fFrustumScale; // Frustum scale on Y
-	matPerspectiveMatrix[2].z = (fZfar + fZnear) / (fZnear - fZfar);
-	matPerspectiveMatrix[3].z = (2 * fZfar * fZnear) / (fZnear - fZfar);
-	matPerspectiveMatrix[2].w = -1.0f;
-	
 	glUseProgram(lucidShaderProgram);
-	glUniformMatrix4fv ( uniformPerspectiveMatrix, 1, GL_FALSE, glm::value_ptr(matPerspectiveMatrix) );
-	glUseProgram(0);
 }
 
-Shader::~Shader () {
-	cout << "Shader going to be deleted\n";
-}
 
 /** TODO : Apparmement inutile, on peut laisser le programme actif tout le long de l'exécution */
 void Shader::useProgram (bool activate) {
@@ -55,11 +32,27 @@ void Shader::useProgram (bool activate) {
 }
 
 void Shader::updateModelMatrix (const glm::mat4& modelMatrix) {
+
+	//glUseProgram(lucidShaderProgram);
 	glUniformMatrix4fv (
 		uniformModelMatrix, 
 		1, 
 		GL_FALSE, 
 		glm::value_ptr(modelMatrix));
+	//glUseProgram(0);
+}
+
+void Shader::updatePerspectiveMatrix (const glm::mat4& perspectiveMatrix) {
+
+	/* TODO : Pourquoi ça ne marche pas si on utilise glUseProgram ici (et dans updateModelMatrix) ? */
+	//glUseProgram(lucidShaderProgram);
+	glUniformMatrix4fv (
+		uniformPerspectiveMatrix, 
+		1, 
+		GL_FALSE, 
+		glm::value_ptr(perspectiveMatrix));
+
+	//glUseProgram(0);
 }
 
 GLuint Shader::CreateProgram (const std::vector<GLuint> &shaderList) {
