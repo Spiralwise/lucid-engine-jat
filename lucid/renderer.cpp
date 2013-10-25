@@ -6,10 +6,12 @@ Renderer::Renderer () {
 
 	shader        = new Shader();
 	
+	camera        = (Camera*)0;
+	meshes        = std::vector<Mesh*>();
+	
 	vertexBuffers = (float*)0;
 	indexBuffers  = (short*)0;
 	vaos          = std::vector<GLuint*>();
-	meshes        = std::vector<Mesh*>();
 	
 	// Rendering options
 		// Depth test
@@ -32,6 +34,7 @@ Renderer::Renderer () {
 
 Renderer::~Renderer () {
 	delete shader;
+	delete camera;
 	delete vertexBuffers;
 	delete indexBuffers;
 	
@@ -56,7 +59,7 @@ void Renderer::addMesh (Mesh& mesh) {
 
 
 void Renderer::setCamera (Camera& cam) {
-	shader->updatePerspectiveMatrix (cam.getPerspectiveMatrix());
+	camera = &cam;
 }
 
 
@@ -128,6 +131,9 @@ void Renderer::draw () {
 	glClearColor( 0.062f, 0.157f, 0.349f, 0.0f );
 	glClearDepth( 1.0f );
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
+	// Update perspective matrix
+	shader->updatePerspectiveMatrix (camera->getCameraPerspectiveMatrix());
 	
 	// Update model matrix
 	for ( int i = 0; i < vaos.size(); i++ ) {

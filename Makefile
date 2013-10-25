@@ -137,6 +137,30 @@ lucid/camera.cpp.s:
 	$(MAKE) -f CMakeFiles\Lucid.dir\build.make CMakeFiles/Lucid.dir/lucid/camera.cpp.s
 .PHONY : lucid/camera.cpp.s
 
+lucid/cmdctrl.obj: lucid/cmdctrl.cpp.obj
+.PHONY : lucid/cmdctrl.obj
+
+# target to build an object file
+lucid/cmdctrl.cpp.obj:
+	$(MAKE) -f CMakeFiles\Lucid.dir\build.make CMakeFiles/Lucid.dir/lucid/cmdctrl.cpp.obj
+.PHONY : lucid/cmdctrl.cpp.obj
+
+lucid/cmdctrl.i: lucid/cmdctrl.cpp.i
+.PHONY : lucid/cmdctrl.i
+
+# target to preprocess a source file
+lucid/cmdctrl.cpp.i:
+	$(MAKE) -f CMakeFiles\Lucid.dir\build.make CMakeFiles/Lucid.dir/lucid/cmdctrl.cpp.i
+.PHONY : lucid/cmdctrl.cpp.i
+
+lucid/cmdctrl.s: lucid/cmdctrl.cpp.s
+.PHONY : lucid/cmdctrl.s
+
+# target to generate assembly for a file
+lucid/cmdctrl.cpp.s:
+	$(MAKE) -f CMakeFiles\Lucid.dir\build.make CMakeFiles/Lucid.dir/lucid/cmdctrl.cpp.s
+.PHONY : lucid/cmdctrl.cpp.s
+
 lucid/main.obj: lucid/main.cpp.obj
 .PHONY : lucid/main.obj
 
@@ -293,6 +317,9 @@ help:
 	@echo ... lucid/camera.obj
 	@echo ... lucid/camera.i
 	@echo ... lucid/camera.s
+	@echo ... lucid/cmdctrl.obj
+	@echo ... lucid/cmdctrl.i
+	@echo ... lucid/cmdctrl.s
 	@echo ... lucid/main.obj
 	@echo ... lucid/main.i
 	@echo ... lucid/main.s

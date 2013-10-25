@@ -17,6 +17,12 @@ private:
 	// Shader
 	Shader *shader;
 	
+	// Scene
+		// Camera
+	Camera *camera;
+		// Objects
+	std::vector<Mesh*> meshes;
+	
 	// Buffers
 	std::vector<GLuint*> vaos;
 	
@@ -26,9 +32,6 @@ private:
 	float *vertexBuffers;
 	short *indexBuffers;
 	size_t color_offset;
-	
-	// Objects
-	std::vector<Mesh*> meshes;
 	
 	// Update
 	bool needToUpdate;

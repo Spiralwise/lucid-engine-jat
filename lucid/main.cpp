@@ -14,19 +14,8 @@
 
 // Lucid Includes
 #include "utils.hpp"
+#include "cmdctrl.hpp"
 #include "renderer.hpp"
-
-
-// Defines intearction
-#define INTERACTION_STOP 0
-#define INTERACTION_FORWARD 1
-#define INTERACTION_BACKWARD 2
-#define INTERACTION_UP 5
-#define INTERACTION_DOWN 6
-
-#define INTERACTION_ROTATION_LEFT 13
-#define INTERACTION_ROTATION_RIGHT 14
-
 
 using namespace std;
 using namespace glm;
@@ -35,10 +24,11 @@ using namespace glm;
 /* Variables */
 	// Rendering context
 GLFWwindow* myWindow = 0; // -> Renderer
-Renderer* renderer   = 0;
+CommandControler* controler = 0;
+Renderer* renderer = 0;
 
 	// Interactions
-unsigned uInteractionState = INTERACTION_STOP;
+//unsigned uInteractionState = INTERACTION_STOP;
 
 	// Performance
 double dMeanRenderTime = .0f;
@@ -47,49 +37,6 @@ double dLastTime;
 
 
 /** GLFW Callback Functions */
-static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-
-	switch ( action ) {
-	
-		case GLFW_PRESS:
-			switch ( key ) {
-			
-				case GLFW_KEY_ESCAPE:
-					glfwSetWindowShouldClose(window, GL_TRUE);
-					break;
-					
-				case GLFW_KEY_Z:
-					uInteractionState = INTERACTION_FORWARD;
-					break;
-					
-				case GLFW_KEY_S:
-					uInteractionState = INTERACTION_BACKWARD;
-					break;
-					
-				case GLFW_KEY_A:
-					uInteractionState = INTERACTION_ROTATION_LEFT;
-					break;
-					
-				case GLFW_KEY_E:
-					uInteractionState = INTERACTION_ROTATION_RIGHT;
-					break;
-					
-				case GLFW_KEY_R:
-					uInteractionState = INTERACTION_UP;
-					break;
-					
-				case GLFW_KEY_F:
-					uInteractionState = INTERACTION_DOWN;
-					break;
-			}
-			break;
-			
-		case GLFW_RELEASE:
-			uInteractionState = INTERACTION_STOP;
-			break;
-	}
-}
-
 static void error_callback(int error, const char* description) {
 	cout << "GLFW has catch an error (" << error << ") : " << description << endl;
 }
@@ -115,7 +62,6 @@ unsigned initGLFW () {
         return EXIT_FAILURE;
     }
 	glfwMakeContextCurrent ( myWindow );
-	glfwSetKeyCallback ( myWindow, key_callback );
 	glfwSetErrorCallback ( error_callback );
 
     cout << "GLFW initialized." << endl;
@@ -144,6 +90,7 @@ int close () {
 
 	renderer->close();
 	delete renderer;
+	delete controler;
     glfwTerminate();
 
 	cout << "Goodbye ! (Mean rendering time=" << dMeanRenderTime*1000 << ")" << endl;
@@ -159,7 +106,8 @@ int main( int argc, char** argv ) {
 	if ( !initGLFW() || !initGLEW() )
 		return EXIT_FAILURE;
 	
-	renderer = new Renderer();
+	controler = new CommandControler (myWindow);
+	renderer  = new Renderer();
 
 	Camera cam   = Camera(45.0f, 10.0f);
 	Mesh object1 = Mesh::generateCube();
@@ -171,6 +119,14 @@ int main( int argc, char** argv ) {
 	
 	object1.translate (glm::vec3(-0.0f, 0.0f, -3.5f));
 	object2.translate (glm::vec3(-1.5f, 0.0f, -6.0f));
+	
+	controler->setKey (WIN_CLOSE, GLFW_KEY_ESCAPE);
+	controler->setKey (CAM_LEFT, GLFW_KEY_Q);
+	controler->setKey (CAM_RIGHT, GLFW_KEY_D);
+	controler->setKey (ELEMENT_FORWARD, GLFW_KEY_I);
+	controler->setKey (ELEMENT_BACKWARD, GLFW_KEY_K);
+	controler->setCamera (cam);
+	controler->setMesh (object1);
 
 	/** Display **/
 	dLastTime = glfwGetTime();
@@ -187,32 +143,7 @@ int main( int argc, char** argv ) {
 		
 		// Events
 		glfwPollEvents();
-		switch ( uInteractionState ) {
-		
-			case INTERACTION_FORWARD: 
-				object1.translate( glm::vec3(0.0f, 0.0f, -0.001f) );
-				break;
-				
-			case INTERACTION_BACKWARD:
-				object1.translate( glm::vec3(0.0f, 0.0f, 0.001f) );
-				break;
-				
-			case INTERACTION_ROTATION_LEFT:
-				object1.rotate( 0.03f, glm::vec3(0.0f, 1.0f, 0.0f) );
-				break;
-				
-			case INTERACTION_ROTATION_RIGHT:
-				object1.rotate( 0.03f, glm::vec3(0.0f, -1.0f, 0.0f) );
-				break;
-				
-			case INTERACTION_UP:
-				object1.translate( glm::vec3(0.0f, 0.001f, 0.f) );
-				break;
-				
-			case INTERACTION_DOWN:
-				object1.translate( glm::vec3(0.0f, -0.001f, 0.0f) );
-				break;
-		}
+		controler->update();
 		
     } while ( !glfwWindowShouldClose( myWindow ) );
 
