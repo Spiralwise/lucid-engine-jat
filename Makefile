@@ -209,6 +209,30 @@ lucid/mesh.cpp.s:
 	$(MAKE) -f CMakeFiles\Lucid.dir\build.make CMakeFiles/Lucid.dir/lucid/mesh.cpp.s
 .PHONY : lucid/mesh.cpp.s
 
+lucid/meshloader.obj: lucid/meshloader.cpp.obj
+.PHONY : lucid/meshloader.obj
+
+# target to build an object file
+lucid/meshloader.cpp.obj:
+	$(MAKE) -f CMakeFiles\Lucid.dir\build.make CMakeFiles/Lucid.dir/lucid/meshloader.cpp.obj
+.PHONY : lucid/meshloader.cpp.obj
+
+lucid/meshloader.i: lucid/meshloader.cpp.i
+.PHONY : lucid/meshloader.i
+
+# target to preprocess a source file
+lucid/meshloader.cpp.i:
+	$(MAKE) -f CMakeFiles\Lucid.dir\build.make CMakeFiles/Lucid.dir/lucid/meshloader.cpp.i
+.PHONY : lucid/meshloader.cpp.i
+
+lucid/meshloader.s: lucid/meshloader.cpp.s
+.PHONY : lucid/meshloader.s
+
+# target to generate assembly for a file
+lucid/meshloader.cpp.s:
+	$(MAKE) -f CMakeFiles\Lucid.dir\build.make CMakeFiles/Lucid.dir/lucid/meshloader.cpp.s
+.PHONY : lucid/meshloader.cpp.s
+
 lucid/renderer.obj: lucid/renderer.cpp.obj
 .PHONY : lucid/renderer.obj
 
@@ -326,6 +350,9 @@ help:
 	@echo ... lucid/mesh.obj
 	@echo ... lucid/mesh.i
 	@echo ... lucid/mesh.s
+	@echo ... lucid/meshloader.obj
+	@echo ... lucid/meshloader.i
+	@echo ... lucid/meshloader.s
 	@echo ... lucid/renderer.obj
 	@echo ... lucid/renderer.i
 	@echo ... lucid/renderer.s

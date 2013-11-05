@@ -12,20 +12,25 @@ Mesh::Mesh (const float *vert, unsigned verticesNum, const short *ind, unsigned 
 		
 	/* TODO : Remove it ! */
 	// Default color for a cube
-	const float cubeColors [] = {
-		0.0f, 0.0f, 0.0f,
-		1.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f,
-		1.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 1.0f,
-		1.0f, 0.0f, 1.0f,
-		0.0f, 1.0f, 1.0f,
-		1.0f, 1.0f, 1.0f
-	};
-	
 	colors = std::vector<float>();
-	for ( unsigned i = 0; i < 24; i++ )
-		colors.push_back (cubeColors[i]);
+	if ( verticesNum == 24 ) {
+		const float cubeColors [] = {
+			0.0f, 0.0f, 0.0f,
+			1.0f, 0.0f, 0.0f,
+			0.0f, 1.0f, 0.0f,
+			1.0f, 1.0f, 0.0f,
+			0.0f, 0.0f, 1.0f,
+			1.0f, 0.0f, 1.0f,
+			0.0f, 1.0f, 1.0f,
+			1.0f, 1.0f, 1.0f
+		};
+		
+		for ( unsigned i = 0; i < 24; i++ )
+			colors.push_back (cubeColors[i]);
+	} else {
+		for ( unsigned i = 0; i < verticesNum; i++ )
+			colors.push_back (0.0f);
+	}
 	
 	indices = std::vector<short>();
 	for ( unsigned i = 0; i < indicesNum; i++ )

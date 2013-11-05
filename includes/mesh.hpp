@@ -22,7 +22,7 @@ private:
 public:
 	// Constructors
 	Mesh (const float*, unsigned, const short*, unsigned);
-	static Mesh generateCube ();
+	static Mesh generateCube (); /* TODO Should return a reference ? Could be a copy otherwise ! */
 	
 	// Getters
 	const float* getVertices ();

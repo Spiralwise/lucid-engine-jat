@@ -14,6 +14,7 @@
 
 // Lucid Includes
 #include "utils.hpp"
+#include "meshloader.hpp"
 #include "cmdctrl.hpp"
 #include "renderer.hpp"
 
@@ -106,27 +107,44 @@ int main( int argc, char** argv ) {
 	if ( !initGLFW() || !initGLEW() )
 		return EXIT_FAILURE;
 	
+	string mesh_file = "assets/";
+	
+	if ( argc > 1 ) {
+		mesh_file.append (argv[1]);
+		mesh_file.append (".obj");
+	} else
+		mesh_file.append ("test.obj");
+	
+	Mesh* teapot = MeshLoader::loadOBJ (mesh_file.c_str());
+	teapot->translate (glm::vec3(2.0f, 0.0f, -5.0f));
+	
 	controler = new CommandControler (myWindow);
 	renderer  = new Renderer();
 
 	Camera cam   = Camera(45.0f, 10.0f);
 	Mesh object1 = Mesh::generateCube();
-	Mesh object2 = Mesh::generateCube();
+	//Mesh object2 = Mesh::generateCube();
 	
 	renderer->setCamera (cam);
+	renderer->addMesh (*teapot);
 	renderer->addMesh (object1);
-	renderer->addMesh (object2);
+	// renderer->addMesh (object2);
 	
-	object1.translate (glm::vec3(-0.0f, 0.0f, -3.5f));
-	object2.translate (glm::vec3(-1.5f, 0.0f, -6.0f));
+	object1.rotate (1.5f, glm::vec3(0.0f, 1.0f, 0.0f));
+	object1.translate (glm::vec3(-0.0f, 0.0f, -5.5f));
+	// object2.translate (glm::vec3(-1.5f, 0.0f, -6.0f));
 	
 	controler->setKey (WIN_CLOSE, GLFW_KEY_ESCAPE);
 	controler->setKey (CAM_LEFT, GLFW_KEY_Q);
 	controler->setKey (CAM_RIGHT, GLFW_KEY_D);
-	controler->setKey (ELEMENT_FORWARD, GLFW_KEY_I);
-	controler->setKey (ELEMENT_BACKWARD, GLFW_KEY_K);
+	controler->setKey (ELEMENT_FORWARD, GLFW_KEY_UP);
+	controler->setKey (ELEMENT_BACKWARD, GLFW_KEY_DOWN);
+	controler->setKey (ELEMENT_UP, GLFW_KEY_P);
+	controler->setKey (ELEMENT_DOWN, GLFW_KEY_M);
+	controler->setKey (ELEMENT_ROTATION_LEFT, GLFW_KEY_LEFT);
+	controler->setKey (ELEMENT_ROTATION_RIGHT, GLFW_KEY_RIGHT);
 	controler->setCamera (cam);
-	controler->setMesh (object1);
+	controler->setMesh (*teapot);
 
 	/** Display **/
 	dLastTime = glfwGetTime();
@@ -146,6 +164,8 @@ int main( int argc, char** argv ) {
 		controler->update();
 		
     } while ( !glfwWindowShouldClose( myWindow ) );
+	
+	delete teapot;
 
 	return close();
 }

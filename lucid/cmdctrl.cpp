@@ -33,16 +33,36 @@ void CommandControler::update () {
 			if ( currentMesh != 0 )
 				currentMesh->translate ( glm::vec3(0.0f, 0.0f, 0.001f) );
 			break;
+			
+		case ELEMENT_UP:
+			if ( currentMesh != 0 )
+				currentMesh->translate ( glm::vec3(0.0f, 0.001f, 0.0f) );
+			break;
+			
+		case ELEMENT_DOWN:
+			if ( currentMesh != 0 )
+				currentMesh->translate ( glm::vec3(0.0f, -0.001f, 0.0f) );
+			break;
+			
+		case ELEMENT_ROTATION_LEFT:
+			if ( currentMesh != 0 )
+				currentMesh->rotate ( -0.01f, glm::vec3(0.0f, 1.0f, 0.0f) );
+			break;
+			
+		case ELEMENT_ROTATION_RIGHT:
+			if ( currentMesh != 0 )
+				currentMesh->rotate ( 0.01f, glm::vec3(0.0f, 1.0f, 0.0f) );
+			break;
 		
 		/* Camera */
 		case CAM_LEFT:
 			if ( currentCamera != 0 )
-				currentCamera->translate ( glm::vec3( -0.001f, 0.0f, 0.0f ) );
+				currentCamera->translate ( glm::vec3( 0.001f, 0.0f, 0.0f ) );
 			break;
 			
 		case CAM_RIGHT:
 			if ( currentCamera != 0 )
-				currentCamera->translate ( glm::vec3( 0.001f, 0.0f, 0.0f ) );
+				currentCamera->translate ( glm::vec3( -0.001f, 0.0f, 0.0f ) );
 			break;
 	}
 }

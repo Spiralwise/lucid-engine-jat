@@ -30,6 +30,7 @@ if not exist lucid-build\%buildtype%\shaders mkdir lucid-build\%buildtype%\shade
 xcopy libraries\*.dll lucid-build\%buildtype% /Y
 :updateshaders
 xcopy lucid\shaders\* lucid-build\%buildtype%\shaders /Y
+xcopy assets\* lucid-build\%buildtype%\assets /Y
 echo Building done.
 goto end
 

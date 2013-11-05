@@ -67,9 +67,13 @@ void Renderer::update () {
 	// Buffer CPU-side
 	unsigned totalVertexBufferSize = 0;
 	unsigned totalIndexBufferSize = 0;
+	std::vector<unsigned> vertexSizes = std::vector<unsigned>();
+	std::vector<unsigned> indexSizes = std::vector<unsigned>();
 	for ( std::vector<Mesh*>::iterator mesh = meshes.begin(); mesh != meshes.end(); ++mesh ) {
 		totalVertexBufferSize += (*mesh)->getVerticesSize();
 		totalIndexBufferSize += (*mesh)->getIndicesSize();
+		vertexSizes.push_back ((*mesh)->getVerticesSize());
+		indexSizes.push_back ((*mesh)->getIndicesSize());
 	}
 	
 	if (vertexBuffers != 0)
@@ -90,6 +94,17 @@ void Renderer::update () {
 		memcpy ( (short*)(indexBuffers + pIndex_offset), (*mesh)->getIndices(), (*mesh)->getIndicesSize()*sizeof(short) );
 		pIndex_offset += (*mesh)->getIndicesSize();
 	}
+
+// check data
+/*std::cout << "Check data vertex:\n";
+for ( int i = 0; i < totalVertexBufferSize; i++ ) {
+	std::cout << *(vertexBuffers+i) << " ";
+}
+
+std::cout << "Check data index:\n";
+for ( int i = 0; i < totalIndexBufferSize; i++ ) {
+	std::cout << *(indexBuffers+i) << " ";
+}*/
 
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
 	glBufferData(GL_ARRAY_BUFFER, totalVertexBufferSize*2*sizeof(float), vertexBuffers, GL_STATIC_DRAW);
@@ -113,6 +128,8 @@ void Renderer::update () {
 		
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferObject);
 		glBindVertexArray(0);
+		
+		pVertex_offset += vertexSizes[i] * sizeof(GL_FLOAT); 
 	}
 	
 	needToUpdate = false;
@@ -136,11 +153,16 @@ void Renderer::draw () {
 	shader->updatePerspectiveMatrix (camera->getCameraPerspectiveMatrix());
 	
 	// Update model matrix
+	unsigned indices_offset = 0;
 	for ( int i = 0; i < vaos.size(); i++ ) {
 		glBindVertexArray(*(vaos[i]));
 		shader->updateModelMatrix ((meshes[i])->getModelWorldMatrix());
-		glDrawElements(GL_TRIANGLES, (meshes[i])->getIndicesSize(), GL_UNSIGNED_SHORT, 0);
-		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, 0);
+		glDrawElements (
+			GL_TRIANGLES, 
+			(meshes[i])->getIndicesSize(), 
+			GL_UNSIGNED_SHORT, 
+			(GLvoid*)indices_offset);
+		indices_offset += (meshes[i])->getIndicesSize() * sizeof(short);
 		glBindVertexArray(0);
 	}
 	
