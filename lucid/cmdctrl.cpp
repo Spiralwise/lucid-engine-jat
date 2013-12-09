@@ -54,6 +54,16 @@ void CommandControler::update () {
 				currentMesh->rotate ( 0.01f, glm::vec3(0.0f, 1.0f, 0.0f) );
 			break;
 		
+		case ELEMENT_ROTATION_UP:
+			if ( currentMesh != 0 )
+				currentMesh->rotate ( -0.01f, glm::vec3(1.0f, 0.0f, 0.0f) );
+			break;
+			
+		case ELEMENT_ROTATION_DOWN:
+			if ( currentMesh != 0 )
+				currentMesh->rotate ( 0.01f, glm::vec3(1.0f, 0.0f, 0.0f) );
+			break;
+		
 		/* Camera */
 		case CAM_LEFT:
 			if ( currentCamera != 0 )

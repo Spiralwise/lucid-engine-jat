@@ -20,10 +20,15 @@ private:
 	bool isNeedUpdate;
 	
 public:
+	// Constructor
 	Camera (float, float, float near=1.0f);
+	
+	// Getters
+	const glm::mat4& getCameraMatrix();
+	const glm::mat4& getPerspectiveMatrix();
 	const glm::mat4& getCameraPerspectiveMatrix();
-	//const glm::mat4& getPerspectiveMatrix ();
-		/* Should not be longer used */
+
+	// Methods
 	void translate (const glm::vec3&);
 };
 

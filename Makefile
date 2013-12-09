@@ -161,6 +161,30 @@ lucid/cmdctrl.cpp.s:
 	$(MAKE) -f CMakeFiles\Lucid.dir\build.make CMakeFiles/Lucid.dir/lucid/cmdctrl.cpp.s
 .PHONY : lucid/cmdctrl.cpp.s
 
+lucid/light.obj: lucid/light.cpp.obj
+.PHONY : lucid/light.obj
+
+# target to build an object file
+lucid/light.cpp.obj:
+	$(MAKE) -f CMakeFiles\Lucid.dir\build.make CMakeFiles/Lucid.dir/lucid/light.cpp.obj
+.PHONY : lucid/light.cpp.obj
+
+lucid/light.i: lucid/light.cpp.i
+.PHONY : lucid/light.i
+
+# target to preprocess a source file
+lucid/light.cpp.i:
+	$(MAKE) -f CMakeFiles\Lucid.dir\build.make CMakeFiles/Lucid.dir/lucid/light.cpp.i
+.PHONY : lucid/light.cpp.i
+
+lucid/light.s: lucid/light.cpp.s
+.PHONY : lucid/light.s
+
+# target to generate assembly for a file
+lucid/light.cpp.s:
+	$(MAKE) -f CMakeFiles\Lucid.dir\build.make CMakeFiles/Lucid.dir/lucid/light.cpp.s
+.PHONY : lucid/light.cpp.s
+
 lucid/main.obj: lucid/main.cpp.obj
 .PHONY : lucid/main.obj
 
@@ -344,6 +368,9 @@ help:
 	@echo ... lucid/cmdctrl.obj
 	@echo ... lucid/cmdctrl.i
 	@echo ... lucid/cmdctrl.s
+	@echo ... lucid/light.obj
+	@echo ... lucid/light.i
+	@echo ... lucid/light.s
 	@echo ... lucid/main.obj
 	@echo ... lucid/main.i
 	@echo ... lucid/main.s

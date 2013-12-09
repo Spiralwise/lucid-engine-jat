@@ -3,10 +3,61 @@
 
 
 /* Constructors */
+Mesh::Mesh (const float *vert, const float *norms, unsigned verticesNum, const short *ind, unsigned indicesNum) {
+	modelMatrix   = glm::mat4(1.0f);
+	
+	vertices = std::vector<float>();
+	normals  = std::vector<float>();
+	for ( unsigned i = 0; i < verticesNum; i++ ) {
+		vertices.push_back (vert[i]);
+		normals.push_back (norms[i]);
+	}
+	
+	/* TODO : Remove it ! */
+	// Default color for a cube
+	colors = std::vector<float>();
+	if ( verticesNum == 24 ) {
+		const float cubeColors [] = {
+			0.0f, 0.0f, 0.0f,
+			1.0f, 0.0f, 0.0f,
+			0.0f, 1.0f, 0.0f,
+			1.0f, 1.0f, 0.0f,
+			0.0f, 0.0f, 1.0f,
+			1.0f, 0.0f, 1.0f,
+			0.0f, 1.0f, 1.0f,
+			1.0f, 1.0f, 1.0f
+		};
+		
+		for ( unsigned i = 0; i < 24; i++ )
+			colors.push_back (cubeColors[i]);
+	} else {
+		for ( unsigned i = 0; i < verticesNum/3; i++ ) {
+			colors.push_back (0.082f);
+			colors.push_back (0.361f);
+			colors.push_back (0.827f);
+		}
+	}
+	
+	indices = std::vector<short>();
+	for ( unsigned i = 0; i < indicesNum; i++ )
+		indices.push_back (ind[i]);
+		
+std::cout << "Check data :\n";
+std::cout << "Vert\tNorm\n";
+for ( unsigned i = 0; i<verticesNum; i++ )
+	std::cout << vertices[i] << "\t" << normals[i] << std::endl;
+std::cout << std::endl << "index\n";
+for ( unsigned i = 0; i<indicesNum; i++ )
+	std::cout << indices[i] << std::endl;
+}
+
+
+/** TODO : Merge with the constructor above */
 Mesh::Mesh (const float *vert, unsigned verticesNum, const short *ind, unsigned indicesNum) {
 	modelMatrix   = glm::mat4(1.0f);
 	
 	vertices = std::vector<float>();
+	normals  = std::vector<float>();
 	for ( unsigned i = 0; i < verticesNum; i++ )
 		vertices.push_back (vert[i]);
 		
@@ -29,7 +80,7 @@ Mesh::Mesh (const float *vert, unsigned verticesNum, const short *ind, unsigned 
 			colors.push_back (cubeColors[i]);
 	} else {
 		for ( unsigned i = 0; i < verticesNum; i++ )
-			colors.push_back (0.0f);
+			colors.push_back (0.5f);
 	}
 	
 	indices = std::vector<short>();
@@ -81,8 +132,16 @@ Mesh Mesh::generateCube () {
 
 
 /* Getters */
+const bool Mesh::hasNormals () {
+	return normals.size();
+}
+
 const float* Mesh::getVertices () {
 	return vertices.data();
+}
+
+const float* Mesh::getNormals () {
+	return normals.data();
 }
 
 const float* Mesh::getColors () {

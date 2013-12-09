@@ -7,6 +7,7 @@
 
 #include <GL/glew.h>
 
+#include "light.hpp"
 #include "mesh.hpp"
 #include "shader.hpp"
 #include "camera.hpp"
@@ -21,15 +22,18 @@ private:
 		// Camera
 	Camera *camera;
 		// Objects
+	std::vector<Light*> lights;
 	std::vector<Mesh*> meshes;
 	
 	// Buffers
 	std::vector<GLuint*> vaos;
 	
 	GLuint vertexBufferObject;
+	GLuint normalBufferObject;
 	GLuint indexBufferObject;
 	
 	float *vertexBuffers;
+	float *normalBuffers;
 	short *indexBuffers;
 	size_t color_offset;
 	
@@ -41,6 +45,7 @@ public:
 	Renderer ();
 	~Renderer ();
 	void addMesh (Mesh&);
+	void addLight (Light&);
 	void setCamera (Camera&);
 	void draw ();
 	void close ();

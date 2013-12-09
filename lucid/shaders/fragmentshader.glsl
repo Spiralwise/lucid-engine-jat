@@ -1,10 +1,10 @@
 #version 330
 
-in vec4 theColor;
+in vec4 vertexColor;
 
 out vec4 outputColor;
 
 void main () {
 
-	outputColor = theColor;
+	outputColor = vertexColor;
 }

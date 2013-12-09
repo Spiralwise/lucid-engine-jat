@@ -116,22 +116,25 @@ int main( int argc, char** argv ) {
 		mesh_file.append ("test.obj");
 	
 	Mesh* teapot = MeshLoader::loadOBJ (mesh_file.c_str());
-	teapot->translate (glm::vec3(2.0f, 0.0f, -5.0f));
+cout << "teapot created\n";
+	teapot->translate (glm::vec3(0.0f, -0.5f, -4.0f));
 	
 	controler = new CommandControler (myWindow);
 	renderer  = new Renderer();
 
 	Camera cam   = Camera(45.0f, 10.0f);
-	Mesh object1 = Mesh::generateCube();
+	Light light  = Light( glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f, 1.0f, 1.0f) );
+	// Mesh object1 = Mesh::generateCube();
 	//Mesh object2 = Mesh::generateCube();
 	
 	renderer->setCamera (cam);
+	renderer->addLight (light);
 	renderer->addMesh (*teapot);
-	renderer->addMesh (object1);
+	// renderer->addMesh (object1);
 	// renderer->addMesh (object2);
 	
-	object1.rotate (1.5f, glm::vec3(0.0f, 1.0f, 0.0f));
-	object1.translate (glm::vec3(-0.0f, 0.0f, -5.5f));
+	// object1.rotate (1.5f, glm::vec3(0.0f, 1.0f, 0.0f));
+	// object1.translate (glm::vec3(-0.0f, 0.0f, -5.5f));
 	// object2.translate (glm::vec3(-1.5f, 0.0f, -6.0f));
 	
 	controler->setKey (WIN_CLOSE, GLFW_KEY_ESCAPE);
@@ -141,8 +144,10 @@ int main( int argc, char** argv ) {
 	controler->setKey (ELEMENT_BACKWARD, GLFW_KEY_DOWN);
 	controler->setKey (ELEMENT_UP, GLFW_KEY_P);
 	controler->setKey (ELEMENT_DOWN, GLFW_KEY_M);
-	controler->setKey (ELEMENT_ROTATION_LEFT, GLFW_KEY_LEFT);
-	controler->setKey (ELEMENT_ROTATION_RIGHT, GLFW_KEY_RIGHT);
+	controler->setKey (ELEMENT_ROTATION_LEFT, GLFW_KEY_KP_4);
+	controler->setKey (ELEMENT_ROTATION_RIGHT, GLFW_KEY_KP_6);
+	controler->setKey (ELEMENT_ROTATION_UP, GLFW_KEY_KP_8);
+	controler->setKey (ELEMENT_ROTATION_DOWN, GLFW_KEY_KP_2);
 	controler->setCamera (cam);
 	controler->setMesh (*teapot);
 

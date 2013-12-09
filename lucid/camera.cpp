@@ -22,6 +22,14 @@ Camera::Camera (float fov, float far, float near) {
 	isNeedUpdate = true;
 }
 
+const glm::mat4& Camera::getCameraMatrix() {
+	return matCameraMatrix;
+}
+
+const glm::mat4& Camera::getPerspectiveMatrix () {
+	return matPerspectiveMatrix;
+}
+
 const glm::mat4& Camera::getCameraPerspectiveMatrix () {
 
 	if ( isNeedUpdate ) {
@@ -31,11 +39,8 @@ const glm::mat4& Camera::getCameraPerspectiveMatrix () {
 	return matCameraPerspectiveMatrix;
 }
 
-/*const glm::mat4& Camera::getPerspectiveMatrix () {
-	return matPerspectiveMatrix;
-}*/
-
 void Camera::translate (const glm::vec3& t) {
+
 	matCameraMatrix = glm::translate (matCameraMatrix, t);
 	isNeedUpdate = true;
 }

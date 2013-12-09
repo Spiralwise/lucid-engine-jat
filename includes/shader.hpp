@@ -16,15 +16,24 @@ class Shader {
 public:
 	Shader ();
 	void useProgram (bool);
+		/* TODO : How can I simplify uniforms updating ? */
+	void updateLighting (const glm::vec3&, const glm::vec4&); /* TODO : Make workable for severable light */
 	void updateModelMatrix (const glm::mat4&);
-	void updatePerspectiveMatrix (const glm::mat4&);
+	void updateCameraMatrix (const glm::mat4&, const glm::mat4&);
+	// void updateNormalCameraMatrix (const glm::mat3&);
+	// void updatePerspectiveMatrix (const glm::mat4&);
 	
 private:
 	GLuint lucidShaderProgram;
 	GLuint attribPosition;
 	GLuint attribColor;
 
+	GLint uniformLightIntensity;
+	GLint uniformLightDirection;
+	
 	GLint uniformModelMatrix;
+	GLint uniformNormalModelMatrix;
+	GLint uniformCameraMatrix;
 	GLint uniformPerspectiveMatrix;
 	
 	GLuint CreateProgram(const std::vector<GLuint>&);

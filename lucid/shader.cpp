@@ -16,19 +16,37 @@ Shader::Shader () {
 	attribPosition				= glGetAttribLocation ( lucidShaderProgram, "position" );
 	attribColor					= glGetAttribLocation ( lucidShaderProgram, "color" );
 	
+	uniformLightIntensity       = glGetUniformLocation ( lucidShaderProgram, "lightIntensity" );
+	uniformLightDirection       = glGetUniformLocation ( lucidShaderProgram, "lightDirection" );
 	uniformModelMatrix	 		= glGetUniformLocation ( lucidShaderProgram, "modelMatrix" );
+	uniformNormalModelMatrix    = glGetUniformLocation ( lucidShaderProgram, "normalModelMatrix" );
+	uniformCameraMatrix         = glGetUniformLocation ( lucidShaderProgram, "cameraMatrix" );
 	uniformPerspectiveMatrix 	= glGetUniformLocation ( lucidShaderProgram, "perspectiveMatrix" );
 	
 	glUseProgram(lucidShaderProgram);
 }
 
 
-/** TODO : Apparmement inutile, on peut laisser le programme actif tout le long de l'exécution */
+/** TODO : Apparently, program could be actived all runtime */
 void Shader::useProgram (bool activate) {
 	if ( activate )
 		glUseProgram(lucidShaderProgram);
 	else
 		glUseProgram(0);
+}
+
+/** TODO : Pass a light instead of two vecs **/
+void Shader::updateLighting (const glm::vec3& vecPosition, const glm::vec4& vecIntensity) {
+
+	glUniform4fv (
+		uniformLightIntensity,
+		1,
+		glm::value_ptr(vecIntensity));
+		
+	glUniform3fv (
+		uniformLightDirection,
+		1,
+		glm::value_ptr(vecPosition));
 }
 
 void Shader::updateModelMatrix (const glm::mat4& modelMatrix) {
@@ -39,18 +57,32 @@ void Shader::updateModelMatrix (const glm::mat4& modelMatrix) {
 		1, 
 		GL_FALSE, 
 		glm::value_ptr(modelMatrix));
+	
+	glm::mat3 normalMatrix(modelMatrix);
+	glUniformMatrix3fv (
+		uniformNormalModelMatrix,
+		1,
+		GL_FALSE,
+		glm::value_ptr(normalMatrix));
+		
 	//glUseProgram(0);
 }
 
-void Shader::updatePerspectiveMatrix (const glm::mat4& perspectiveMatrix) {
+void Shader::updateCameraMatrix (const glm::mat4& perspectiveMatrix, const glm::mat4& cameraMatrix) {
 
-	/* TODO : Pourquoi ça ne marche pas si on utilise glUseProgram ici (et dans updateModelMatrix) ? */
+	/* TODO : Why that doesn't work if I use glUseProgram here (and in updateModelMatrix) ? */
 	//glUseProgram(lucidShaderProgram);
 	glUniformMatrix4fv (
 		uniformPerspectiveMatrix, 
 		1, 
 		GL_FALSE, 
 		glm::value_ptr(perspectiveMatrix));
+		
+	glUniformMatrix4fv (
+		uniformCameraMatrix, 
+		1, 
+		GL_FALSE, 
+		glm::value_ptr(cameraMatrix));
 
 	//glUseProgram(0);
 }
