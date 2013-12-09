@@ -8,6 +8,7 @@
 #include <GL/glew.h>
 
 #include "light.hpp"
+#include "ambient.hpp"
 #include "mesh.hpp"
 #include "shader.hpp"
 #include "camera.hpp"
@@ -22,6 +23,7 @@ private:
 		// Camera
 	Camera *camera;
 		// Objects
+	AmbientLight *ambient;
 	std::vector<Light*> lights;
 	std::vector<Mesh*> meshes;
 	
@@ -46,6 +48,7 @@ public:
 	~Renderer ();
 	void addMesh (Mesh&);
 	void addLight (Light&);
+	void addAmbientLight (AmbientLight&);
 	void setCamera (Camera&);
 	void draw ();
 	void close ();

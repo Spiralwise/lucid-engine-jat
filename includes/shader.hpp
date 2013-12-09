@@ -18,6 +18,7 @@ public:
 	void useProgram (bool);
 		/* TODO : How can I simplify uniforms updating ? */
 	void updateLighting (const glm::vec3&, const glm::vec4&); /* TODO : Make workable for severable light */
+	void updateAmbient (const glm::vec4&); /* TODO : Merge with updateLight(...) */
 	void updateModelMatrix (const glm::mat4&);
 	void updateCameraMatrix (const glm::mat4&, const glm::mat4&);
 	// void updateNormalCameraMatrix (const glm::mat3&);
@@ -28,6 +29,7 @@ private:
 	GLuint attribPosition;
 	GLuint attribColor;
 
+	GLint uniformAmbientIntensity; /* TODO : Merge with light intensity */
 	GLint uniformLightIntensity;
 	GLint uniformLightDirection;
 	

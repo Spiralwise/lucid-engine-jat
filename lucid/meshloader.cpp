@@ -28,7 +28,7 @@ Mesh* MeshLoader::loadOBJ (const char* filename) {
 	
 	short index_counter = 0;
 	map<string, short> optimized_index;
-	string vertex_normal_index = "test of toto";
+	string vertex_normal_index = "";
 	char converted_number [8];
 	int selected_index;
 	

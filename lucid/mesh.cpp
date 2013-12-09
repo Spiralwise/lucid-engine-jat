@@ -42,13 +42,13 @@ Mesh::Mesh (const float *vert, const float *norms, unsigned verticesNum, const s
 	for ( unsigned i = 0; i < indicesNum; i++ )
 		indices.push_back (ind[i]);
 		
-std::cout << "Check data :\n";
+/*std::cout << "Check data :\n";
 std::cout << "Vert\tNorm\n";
 for ( unsigned i = 0; i<verticesNum; i++ )
 	std::cout << vertices[i] << "\t" << normals[i] << std::endl;
 std::cout << std::endl << "index\n";
 for ( unsigned i = 0; i<indicesNum; i++ )
-	std::cout << indices[i] << std::endl;
+	std::cout << indices[i] << std::endl;*/
 }
 
 

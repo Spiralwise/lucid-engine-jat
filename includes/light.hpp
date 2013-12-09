@@ -8,7 +8,7 @@
 class Light
 {
 
-private:
+protected:
 	glm::vec3 position; /* TODO : Create a generic 3D object for all objects (like meshes...) */
 	glm::vec4 intensity;
 	

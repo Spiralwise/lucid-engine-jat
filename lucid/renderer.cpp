@@ -67,6 +67,11 @@ void Renderer::addLight (Light& light) {
 }
 
 
+void Renderer::addAmbientLight (AmbientLight& light) {
+	ambient = &light;
+}
+
+
 void Renderer::setCamera (Camera& cam) {
 	camera = &cam;
 }
@@ -182,6 +187,7 @@ void Renderer::draw () {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 	// Update lighting matrix
+	shader->updateAmbient (ambient->getColorIntensity());
 	if ( lights.size() > 0)
 		shader->updateLighting ((lights[0])->getPosition(), (lights[0])->getColorIntensity());
 	// Update perspective-camera matrix
