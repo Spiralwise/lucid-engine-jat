@@ -31,7 +31,7 @@ private:
 
 	GLint uniformAmbientIntensity; /* TODO : Merge with light intensity */
 	GLint uniformLightIntensity;
-	GLint uniformLightDirection;
+	GLint uniformLightPosition;
 	
 	GLint uniformModelMatrix;
 	GLint uniformNormalModelMatrix;

@@ -18,7 +18,7 @@ Shader::Shader () {
 	
 	uniformAmbientIntensity     = glGetUniformLocation ( lucidShaderProgram, "ambientColor" );
 	uniformLightIntensity       = glGetUniformLocation ( lucidShaderProgram, "lightColor" );
-	uniformLightDirection       = glGetUniformLocation ( lucidShaderProgram, "lightDirection" );
+	uniformLightPosition        = glGetUniformLocation ( lucidShaderProgram, "lightPosition" );
 	uniformModelMatrix	 		= glGetUniformLocation ( lucidShaderProgram, "modelMatrix" );
 	uniformNormalModelMatrix    = glGetUniformLocation ( lucidShaderProgram, "normalModelMatrix" );
 	uniformCameraMatrix         = glGetUniformLocation ( lucidShaderProgram, "cameraMatrix" );
@@ -45,7 +45,7 @@ void Shader::updateLighting (const glm::vec3& vecPosition, const glm::vec4& vecI
 		glm::value_ptr(vecIntensity));
 		
 	glUniform3fv (
-		uniformLightDirection,
+		uniformLightPosition,
 		1,
 		glm::value_ptr(vecPosition));
 }

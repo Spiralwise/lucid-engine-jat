@@ -116,14 +116,14 @@ int main( int argc, char** argv ) {
 		mesh_file.append ("test.obj");
 	
 	Mesh* teapot = MeshLoader::loadOBJ (mesh_file.c_str());
-	teapot->translate (glm::vec3(0.0f, -0.5f, -4.0f));
+	teapot->translate (glm::vec3(0.0f, -0.5f, -3.0f));
 	
 	controler = new CommandControler (myWindow);
 	renderer  = new Renderer();
 
-	Camera cam           = Camera(45.0f, 10.0f);
-	AmbientLight ambient = AmbientLight( glm::vec3(0.9f, 0.2f, 0.3f), 0.05f );
-	Light light          = Light( glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f, 1.0f, 1.0f) );
+	Camera cam           = Camera(45.0f, 20.0f);
+	AmbientLight ambient = AmbientLight( glm::vec3(0.9f, 0.2f, 0.3f), 1.0f );
+	Light light          = Light( glm::vec3(0.0f, 0.5f, -2.0f), glm::vec3(1.0f, 1.0f, 1.0f) );
 	// Mesh object1 = Mesh::generateCube();
 	//Mesh object2 = Mesh::generateCube();
 	
