@@ -50,11 +50,18 @@ void main () {
 	
 	// Compute specular lighting
 	vec3 viewDirection      = normalize (-cameraSpacePosition);
-	vec3 reflectDirection   = reflect (-lightDirection, normalize(fragmentNormal));
-	float specularIntensity = dot (viewDirection, reflectDirection);
+		// Phong specular model
+	// vec3 reflectDirection   = reflect (-lightDirection, normalize(fragmentNormal));
+	// float specularIntensity = dot (viewDirection, reflectDirection);
+	// specularIntensity       = clamp (specularIntensity, 0, 1);
+	// specularIntensity       = cosAngleIncidence != 0.0 ? specularIntensity : 0.0;
+	// specularIntensity       = pow (specularIntensity, 4);
+		// Blinn specular model
+	vec3 halfAngle          = normalize (viewDirection + lightDirection);
+	float specularIntensity = dot (normalize(fragmentNormal), halfAngle);
 	specularIntensity       = clamp (specularIntensity, 0, 1);
 	specularIntensity       = cosAngleIncidence != 0.0 ? specularIntensity : 0.0;
-	specularIntensity       = pow (specularIntensity, 4);
+	specularIntensity       = pow (specularIntensity, 8);
 	
 	// Render color
 		// Ambient
