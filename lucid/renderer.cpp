@@ -188,8 +188,8 @@ void Renderer::draw () {
 	
 	// Update lighting matrix
 	shader->updateAmbient (ambient->getColorIntensity());
-	if ( lights.size() > 0)
-		shader->updateLighting ((lights[0])->getPosition(), (lights[0])->getColorIntensity());
+	if ( lights.size() > 0 && camera != 0 )
+		shader->updateLighting ((lights[0])->getPosition(), camera->getCameraMatrix(), (lights[0])->getColorIntensity());
 	// Update perspective-camera matrix
 	shader->updateCameraMatrix (camera->getPerspectiveMatrix(), camera->getCameraMatrix());
 	

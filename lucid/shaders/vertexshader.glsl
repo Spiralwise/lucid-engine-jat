@@ -12,7 +12,7 @@ uniform mat4 perspectiveMatrix;
 
 out vec4 fragmentDiffuseColor;
 out vec3 fragmentNormal;
-out vec3 fragmentPosition;
+//out vec3 fragmentPosition;
 	
 void main () {
 	
@@ -22,6 +22,6 @@ void main () {
 	
 	// Lighting
 	fragmentDiffuseColor = color;
-	fragmentNormal       = normalModelMatrix * normal;
-	fragmentPosition     = worldPosition;
+	fragmentNormal       = mat3(cameraMatrix) * normalModelMatrix * normal;
+	//fragmentPosition     = worldPosition;
 }

@@ -11,13 +11,19 @@
 #include "utils.hpp"
 
 
+typedef struct {	
+	glm::mat4 matClipToCamera;
+	glm::ivec2 windowSize;
+} UniformBlock_Unprojection;
+
+
 class Shader {
 	
 public:
 	Shader ();
 	void useProgram (bool);
 		/* TODO : How can I simplify uniforms updating ? */
-	void updateLighting (const glm::vec3&, const glm::vec4&); /* TODO : Make workable for severable light */
+	void updateLighting (const glm::vec3&, const glm::mat4&, const glm::vec4&); /* TODO : Make workable for severable light */
 	void updateAmbient (const glm::vec4&); /* TODO : Merge with updateLight(...) */
 	void updateModelMatrix (const glm::mat4&);
 	void updateCameraMatrix (const glm::mat4&, const glm::mat4&);
@@ -37,6 +43,9 @@ private:
 	GLint uniformNormalModelMatrix;
 	GLint uniformCameraMatrix;
 	GLint uniformPerspectiveMatrix;
+	
+	GLuint uniformBlockUnprojection;
+	GLuint unprojectionBuffer;
 	
 	GLuint CreateProgram(const std::vector<GLuint>&);
 	GLuint CreateShader(GLenum, const std::string&);

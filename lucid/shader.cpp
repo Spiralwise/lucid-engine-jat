@@ -24,6 +24,10 @@ Shader::Shader () {
 	uniformCameraMatrix         = glGetUniformLocation ( lucidShaderProgram, "cameraMatrix" );
 	uniformPerspectiveMatrix 	= glGetUniformLocation ( lucidShaderProgram, "perspectiveMatrix" );
 	
+	uniformBlockUnprojection    = glGetUniformBlockIndex ( lucidShaderProgram, "Unprojection" );
+	
+	glGenBuffers (1, &unprojectionBuffer);
+	
 	glUseProgram(lucidShaderProgram);
 }
 
@@ -37,17 +41,18 @@ void Shader::useProgram (bool activate) {
 }
 
 /** TODO : Pass a light instead of two vecs **/
-void Shader::updateLighting (const glm::vec3& vecPosition, const glm::vec4& vecIntensity) {
+void Shader::updateLighting (const glm::vec3& vecPosition, const glm::mat4& cameraMatrix, const glm::vec4& vecIntensity) {
 
 	glUniform4fv (
 		uniformLightIntensity,
 		1,
 		glm::value_ptr(vecIntensity));
-		
+
+	glm::vec4 vecPositionCameraSpace = cameraMatrix * glm::vec4(vecPosition, 1.0f);
 	glUniform3fv (
 		uniformLightPosition,
 		1,
-		glm::value_ptr(vecPosition));
+		glm::value_ptr(vecPositionCameraSpace));
 }
 
 void Shader::updateAmbient (const glm::vec4& vecIntensity) {
@@ -77,6 +82,7 @@ void Shader::updateModelMatrix (const glm::mat4& modelMatrix) {
 	//glUseProgram(0);
 }
 
+/* /!\ TODO : Window size is hard-coded. /!\ */
 void Shader::updateCameraMatrix (const glm::mat4& perspectiveMatrix, const glm::mat4& cameraMatrix) {
 
 	/* TODO : Why that doesn't work if I use glUseProgram here (and in updateModelMatrix) ? */
@@ -93,6 +99,18 @@ void Shader::updateCameraMatrix (const glm::mat4& perspectiveMatrix, const glm::
 		GL_FALSE, 
 		glm::value_ptr(cameraMatrix));
 
+	glUniformBlockBinding (lucidShaderProgram, uniformBlockUnprojection, 1);
+	UniformBlock_Unprojection blockUnprojection;
+	blockUnprojection.matClipToCamera = glm::inverse (perspectiveMatrix);
+	blockUnprojection.windowSize      = glm::ivec2(1024, 768);
+	//int winSize[] = {1024, 768};
+	glBindBuffer (GL_UNIFORM_BUFFER, unprojectionBuffer);
+	glBufferData (GL_UNIFORM_BUFFER, sizeof(blockUnprojection), &blockUnprojection, GL_DYNAMIC_DRAW);
+	// glBufferSubData (GL_UNIFORM_BUFFER, 0, sizeof(blockUnprojection), &blockUnprojection);
+	// glBufferSubData (GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(blockUnprojection.matClipToCamera));
+	// glBufferSubData (GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(winSize), winSize);
+	glBindBufferBase (GL_UNIFORM_BUFFER, 1, unprojectionBuffer);
+	glBindBuffer (GL_UNIFORM_BUFFER, 0);
 	//glUseProgram(0);
 }
 
