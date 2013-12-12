@@ -58,10 +58,16 @@ void main () {
 	// specularIntensity       = pow (specularIntensity, 4);
 		// Blinn specular model
 	vec3 halfAngle          = normalize (viewDirection + lightDirection);
-	float specularIntensity = dot (normalize(fragmentNormal), halfAngle);
-	specularIntensity       = clamp (specularIntensity, 0, 1);
-	specularIntensity       = cosAngleIncidence != 0.0 ? specularIntensity : 0.0;
-	specularIntensity       = pow (specularIntensity, 8);
+	// float specularIntensity = dot (normalize(fragmentNormal), halfAngle);
+	// specularIntensity       = clamp (specularIntensity, 0, 1);
+	// specularIntensity       = cosAngleIncidence != 0.0 ? specularIntensity : 0.0;
+	// specularIntensity       = pow (specularIntensity, 8);
+		// Gaussian specular model
+	float halfToNormalAngle = acos ( dot(halfAngle, normalize(fragmentNormal)) );
+	float specularIntensity = halfToNormalAngle / 0.1;
+	specularIntensity       *= specularIntensity;
+	specularIntensity       = -specularIntensity;
+	specularIntensity       = exp (specularIntensity);
 	
 	// Render color
 		// Ambient
