@@ -105,7 +105,7 @@ void Shader::updateCameraMatrix (const glm::mat4& perspectiveMatrix, const glm::
 	blockUnprojection.windowSize      = glm::ivec2(1024, 768);
 	//int winSize[] = {1024, 768};
 	glBindBuffer (GL_UNIFORM_BUFFER, unprojectionBuffer);
-	glBufferData (GL_UNIFORM_BUFFER, sizeof(blockUnprojection), &blockUnprojection, GL_DYNAMIC_DRAW);
+	glBufferData (GL_UNIFORM_BUFFER, sizeof(blockUnprojection), &blockUnprojection, GL_DYNAMIC_DRAW); /* TODO Why does it work but not glBufferSubData ? */
 	// glBufferSubData (GL_UNIFORM_BUFFER, 0, sizeof(blockUnprojection), &blockUnprojection);
 	// glBufferSubData (GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(blockUnprojection.matClipToCamera));
 	// glBufferSubData (GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(winSize), winSize);

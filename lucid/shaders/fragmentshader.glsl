@@ -39,14 +39,30 @@ vec4 applyLightIntensity (in vec3 cameraSpacePosition, out vec3 lightDirection) 
 
 void main () {
 
+	// Compute diffuse lighting
 	vec3 cameraSpacePosition = getCameraSpacePosition();
-	vec3 lightDirection = vec3(0.0);
-	vec4 attennuedIntensity = applyLightIntensity (cameraSpacePosition, lightDirection);
-
-	float cosAngleIncidence = dot(normalize(fragmentNormal), lightDirection);
-	cosAngleIncidence       = clamp (cosAngleIncidence, 0, 1);
+	vec3 lightDirection      = vec3(0.0);
 	
-	outputColor = attennuedIntensity * fragmentDiffuseColor * cosAngleIncidence + fragmentDiffuseColor * ambientColor;
+	vec4 attennuedIntensity  = applyLightIntensity (cameraSpacePosition, lightDirection);
+	
+	float cosAngleIncidence  = dot(normalize(fragmentNormal), lightDirection);
+	cosAngleIncidence        = clamp (cosAngleIncidence, 0, 1);
+	
+	// Compute specular lighting
+	vec3 viewDirection      = normalize (-cameraSpacePosition);
+	vec3 reflectDirection   = reflect (-lightDirection, normalize(fragmentNormal));
+	float specularIntensity = dot (viewDirection, reflectDirection);
+	specularIntensity       = clamp (specularIntensity, 0, 1);
+	specularIntensity       = cosAngleIncidence != 0.0 ? specularIntensity : 0.0;
+	specularIntensity       = pow (specularIntensity, 4);
+	
+	// Render color
+		// Ambient
+	outputColor = fragmentDiffuseColor * ambientColor;
+		// Diffuse
+	outputColor += attennuedIntensity * fragmentDiffuseColor * cosAngleIncidence;
+		// Specular
+	outputColor += attennuedIntensity * specularIntensity * lightColor;
 
 	
 // Test
@@ -54,6 +70,4 @@ void main () {
 	//	outputColor = vec4(0.0, 1.0, 0.0, 1.0);
 	//else
 	//	outputColor = vec4(1.0, 0.0, 0.0, 1.0);
-	//outputColor = vec4(cameraSpacePosition.x, cameraSpacePosition.y, -cameraSpacePosition.z-3.0, 1.0);
-	//outputColor = vec4(cosAngleIncidence, cosAngleIncidence, cosAngleIncidence, 1.0);
 }
