@@ -113,7 +113,7 @@ int main( int argc, char** argv ) {
 		mesh_file.append (argv[1]);
 		mesh_file.append (".obj");
 	} else
-		mesh_file.append ("test.obj");
+		mesh_file.append ("teapot.obj");
 	
 	Mesh* teapot = MeshLoader::loadOBJ (mesh_file.c_str());
 	teapot->translate (glm::vec3(0.0f, -0.5f, -3.0f));

@@ -6,6 +6,9 @@
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+//#include <gli/gli.hpp>
+
+#include <string>
 
 
 class Mesh
@@ -15,6 +18,7 @@ private:
 	glm::mat4 modelMatrix;
 	std::vector<float> vertices;
 	std::vector<float> normals;
+	std::vector<float> uv_coordinates;
 	std::vector<float> colors;
 	std::vector<short> indices;
 	
@@ -22,12 +26,14 @@ public:
 	// Constructors
 	Mesh (const float*, unsigned, const short*, unsigned); // Without normals
 	Mesh (const float*, const float*, unsigned, const short*, unsigned);
+	//Mesh (const float*, const float*, const float*, unsigned, const short*, unsigned, std::string); // with texture and UV's
 	static Mesh generateCube (); /* TODO Should return a reference ? Could be a copy otherwise ! */
 	
 	// Getters
 	const bool hasNormals ();
 	const float* getVertices ();
 	const float* getNormals ();
+	const float* getUVCoordinates ();
 	const float* getColors ();
 	const short* getIndices ();
 	const unsigned getVerticesSize ();

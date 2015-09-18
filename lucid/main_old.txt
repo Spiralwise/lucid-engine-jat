@@ -1,0 +1,245 @@
+/** Shaders **/
+void initShaders () {
+
+	/*// Shaders
+	std::vector<GLuint> shaderList;
+	shaderList.push_back( CreateShader(GL_VERTEX_SHADER, readFile("shaders/vertexshader.glsl")) );
+	shaderList.push_back( CreateShader(GL_FRAGMENT_SHADER, readFile("shaders/fragmentshader.glsl")) );
+	lucidShaderProgram = CreateProgram(shaderList);
+	glDeleteShader( shaderList[0] ); // TODO : Cette ligne doit être prise en charge par shader.h ?
+	
+	attribPosition				= glGetAttribLocation ( lucidShaderProgram, "position" );
+	attribColor					= glGetAttribLocation ( lucidShaderProgram, "color" );
+	
+	uniformModelMatrix	 		= glGetUniformLocation ( lucidShaderProgram, "modelMatrix" );
+	uniformPerspectiveMatrix 	= glGetUniformLocation ( lucidShaderProgram, "perspectiveMatrix" );
+	
+		// Perspective Matrix
+	matPerspectiveMatrix[0].x = fFrustumScale/1.333f; // Frustum scale on X <-- Aspect ratio here
+	matPerspectiveMatrix[1].y = fFrustumScale; // Frustum scale on Y
+	matPerspectiveMatrix[2].z = (fZfar + fZnear) / (fZnear - fZfar);
+	matPerspectiveMatrix[3].z = (2 * fZfar * fZnear) / (fZnear - fZfar);
+	matPerspectiveMatrix[2].w = -1.0f;
+	
+	glUseProgram(lucidShaderProgram);
+	glUniformMatrix4fv ( uniformPerspectiveMatrix, 1, GL_FALSE, glm::value_ptr(matPerspectiveMatrix) );
+	glUseProgram(0);
+	
+	// Rendering options
+		// Depth test
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
+	glDepthFunc(GL_LEQUAL);
+	glDepthRange(0.0f, 1.0f);
+	
+		// Face culling
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+	glFrontFace(GL_CCW);*/
+}
+
+
+/** Buffes **/
+void initBuffers () {
+
+	/*size_t cubeVerticesOffset = sizeof(float) * 3 * 8;
+	size_t colorDataOffset = sizeof(float) * 3 * 8 * 2;
+	
+	// Buffers
+	GLuint vertexBufferObject;
+	GLuint indexBufferObject;
+	
+		// Vertex Array
+	glGenBuffers(1, &vertexBufferObject);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	
+		// Element Array
+	glGenBuffers(1, &indexBufferObject);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferObject);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cubeIndexes), cubeIndexes, GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);*/
+	
+		// VAO's
+	/*glGenVertexArrays(1, &vao1);
+	glBindVertexArray(vao1);
+	
+	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)colorDataOffset);
+	
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferObject);
+	
+	glBindVertexArray(0);
+	
+	glGenVertexArrays(1, &vao2);
+	glBindVertexArray(vao2);
+	
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)cubeVerticesOffset);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)colorDataOffset);
+	
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferObject);
+	
+	glBindVertexArray(0);*/
+}
+
+=====================
+
+
+if ( !initGLFW() || !initGLEW() )
+		return EXIT_FAILURE;
+	
+	/*initShaders();
+	initBuffers();*/
+	/** Variables **/
+	renderer = Renderer();
+
+	/*GLuint lucidShaderProgram; // -> Shader
+	GLuint vao1, vao2; // -> BufferManager
+
+	GLuint attribPosition; // -> Shader
+	GLuint attribColor; // -> Shader
+
+	GLint uniformModelMatrix; // -> Shader / Renderer
+	GLint uniformPerspectiveMatrix; // -> Shader / Renderer
+
+	const float fFrustumScale	= getFrustumScale(45.0f); // -> Camera
+	const float fZnear 			= 1.0f; // -> Camera
+	const float fZfar 			= 10.0f; // -> Camera
+	glm::mat4 matPerspectiveMatrix (0.0f); // -> Camera*/
+
+
+	/** Object Initialisation **/
+	/*const float cubeVertices [] = {
+		// Positions object 1
+		-0.5f, -0.5f, 0.5f,
+		0.5f, -0.5f, 0.5f,
+		-0.5f, 0.5f, 0.5f,
+		0.5f, 0.5f, 0.5f,
+		-0.5f, -0.5f, -0.5f,
+		0.5f, -0.5f, -0.5f,
+		-0.5f, 0.5f, -0.5f,
+		0.5f, 0.5f, -0.5f,
+		
+		// Positions object 2
+		-0.75f, -0.5f, 0.0f,
+		0.0f, -0.5f, 0.75f,
+		-0.75f, 0.5f, 0.0f,
+		0.0f, 0.5f, 0.75f,
+		0.0f, -0.5f, -0.75f,
+		0.75f, -0.5f, 0.0f,
+		0.0f, 0.5f, -0.75f,
+		0.75f, 0.5f, 0.0f,
+		
+		// Colors
+		0.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 1.0f,
+		1.0f, 0.0f, 1.0f,
+		0.0f, 1.0f, 1.0f,
+		1.0f, 1.0f, 1.0f,
+	};
+
+	const GLshort cubeIndexes [] = {
+		
+		// front
+		0, 1, 3,
+		0, 3, 2,
+		
+		// right
+		1, 5, 7,
+		1, 7, 3,
+		
+		// top
+		3, 7, 6,
+		3, 6, 2,
+		
+		// left
+		0, 6, 4,
+		0, 2, 6,
+		
+		// bottom
+		1, 0, 4,
+		1, 4, 5,
+		
+		// back
+		5, 4, 6,
+		5, 6, 7
+	};*/
+
+	Mesh object1 = Mesh::generateCube();
+	Mesh object2 = Mesh::generateCube();
+
+	renderer.addMesh (object1);
+	renderer.addMesh (object2);
+
+	object1.translate (glm::vec3(-0.0f, 0.0f, -3.5f));
+	object2.translate (glm::vec3(-1.5f, 0.0f, -1.0f));
+	
+	
+	/** Display **/
+	dLastTime = glfwGetTime();
+	//size_t indexArraySize = sizeof(cubeIndexes) / sizeof(GLshort);
+	//glm::mat4 matrixModelObject2;
+	
+    do {
+		
+		renderer.draw();
+		/*glClearColor( 0.062f, 0.157f, 0.349f, 0.0f );
+		glClearDepth( 1.0f );
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		
+		glUseProgram(lucidShaderProgram);
+		
+		/*glBindVertexArray(vao1);
+		glUniformMatrix4fv(uniformModelMatrix, 1, GL_FALSE, glm::value_ptr(matrixObject1));
+		
+		glDrawElements(GL_TRIANGLES, indexArraySize, GL_UNSIGNED_SHORT, 0);
+		
+		glBindVertexArray(vao2);
+		matrixModelObject2 = matrixObject1 * matrixObject2;
+		glUniformMatrix4fv(uniformModelMatrix, 1, GL_FALSE, glm::value_ptr(matrixModelObject2));
+		glDrawElements(GL_TRIANGLES, indexArraySize, GL_UNSIGNED_SHORT, 0);
+		
+		glBindVertexArray(0);
+
+		glUseProgram(0);*/
+		
+        glfwSwapBuffers ( myWindow );
+		
+		dMeanRenderTime = uRenderTimeNumber * dMeanRenderTime;
+		dMeanRenderTime += glfwGetTime() - dLastTime;
+		dMeanRenderTime /= ++uRenderTimeNumber;
+		dLastTime = glfwGetTime();
+		
+		// Events
+		glfwPollEvents();
+		switch ( uInteractionState ) {
+		
+			case INTERACTION_FORWARD: 
+				object1.translate( glm::vec3(0.0f, 0.0f, -0.001f) );
+				break;
+				
+			case INTERACTION_BACKWARD:
+				object1.translate( glm::vec3(0.0f, 0.0f, 0.001f) );
+				break;
+				
+			case INTERACTION_ROTATION_LEFT:
+				object1.rotate( 0.01f, glm::vec3(0.0f, 1.0f, 0.0f) );
+				break;
+				
+			case INTERACTION_ROTATION_RIGHT:
+				object1.rotate( 0.01f, glm::vec3(0.0f, -1.0f, 0.0f) );
+				break;
+		}
+		
+    } while ( !glfwWindowShouldClose( myWindow ) );
+
+	return close();

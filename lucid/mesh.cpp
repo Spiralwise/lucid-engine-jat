@@ -3,6 +3,25 @@
 
 
 /* Constructors */
+/*Mesh::Mesh (const float *vert, const float *norms, const float *uvs, unsigned verticesNum, const short ind*, unsigned indicesNum, char* filename) {
+	modelMatrix   = glm::mat4(1.0f);
+	
+	vertices       = std::vector<float>();
+	normals        = std::vector<float>();
+	uv_coordinates = std::vector<float>();
+	for ( unsigned i = 0; i < verticesNum; i++ ) {
+		vertices.push_back (vert[i]);
+		normals.push_back (norms[i]);
+		uv_coordinates.push_back (uvs[i]);
+	}
+	
+	indices = std::vector<short>();
+	for ( unsigned i = 0; i < indicesNum; i++ )
+		indices.push_back (ind[i]);
+}*/
+
+
+/** TODO : Merge with the constructor above */
 Mesh::Mesh (const float *vert, const float *norms, unsigned verticesNum, const short *ind, unsigned indicesNum) {
 	modelMatrix   = glm::mat4(1.0f);
 	
@@ -142,6 +161,10 @@ const float* Mesh::getVertices () {
 
 const float* Mesh::getNormals () {
 	return normals.data();
+}
+
+const float* Mesh::getUVCoordinates () {
+	return uv_coordinates.data();
 }
 
 const float* Mesh::getColors () {

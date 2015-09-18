@@ -21,3 +21,11 @@ string LUtils::readFile( const string &filename ) {
 	
 	return output;
 }
+
+/**
+ * Load a DDS image.
+ */
+/*gli::texture2D LUtils::loadDDS( const string &filename ) {
+
+	return Texture( gli::loadStorageDDS(filename) );
+}*/
