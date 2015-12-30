@@ -1,8 +1,16 @@
 # Lucid Engine - CMakeLists #
 cmake_minimum_required(VERSION 2.8)
-project(Lucid CXX)
-set(EXECUTABLE_OUTPUT_PATH lucid-build/${CMAKE_BUILD_TYPE})
+project(Lucid C CXX)
+
+# Settings
+set(EXECUTABLE_OUTPUT_PATH build/${CMAKE_BUILD_TYPE})
+#set(GLFW_LINK_DIR ./libraries/glfw/lib-mingw)
+
+# Package requirements
 find_package(OpenGL REQUIRED)
+find_package(GLEW REQUIRED)
+find_package(PkgConfig REQUIRED)
+pkg_search_module(GLFW REQUIRED glfw3)
 
 # Sources
 file(
@@ -11,30 +19,20 @@ file(
 	lucid/*
 )
 
-# Libraries
+# Includes
 include_directories(
-	${GLEW_INCLUDE_DIR}
-	#./libraries/glew/include
-	${GLFW_INCLUDE_DIR}
-	#./libraries/glfw/include
-	${GLM_INCLUDE_DIR}
-	#./libraries/glm
+	./includes
+	${GLFW_INCLUDE_DIRS}
 )
-link_directories(
-	${GLEW_LINK_DIR}
-	#./libraries/glew/lib
-	${GLFW_LINK_DIR}
-	#./libraries/glfw/lib-mingw
+
+# Libraries
+target_link_libraries(
+	${PROJECT_NAME}
+	${GLFW_LIBRARIES}
 )
 
 # Executable
 add_executable(
 	${PROJECT_NAME}
 	${sources}
-)
-target_link_libraries(
-	${PROJECT_NAME}
-	openGL32
-	glew32.dll
-	glfw3dll
 )
