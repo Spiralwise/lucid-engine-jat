@@ -1,4 +1,6 @@
-# Project Lucid
+# Project Lucid (Just-A-Test version)
+
+___DISCLAIMER : This version is out of date. I am conducting an entire refactoring of the project for more compatibility, readability and efficiency. Please follow the right project.___
 
 _Follow updates on [Tumblr](http://spiralwise.tumblr.com/)._
 
